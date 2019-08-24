@@ -1,0 +1,14 @@
+package com.tobias.server.uno.command;
+
+public enum CommandType {
+    PLAYER_DRAWCARD,
+    PLAYER_LAYCARD,
+    PLAYER_UNO,
+    CLIENT_CONNECT,
+    CLIENT_GAMESTART,
+    CLIENT_REGISTEROPPONENTPLAYER,
+    CLIENT_POLL,
+    CLIENT_READY,
+    CLIENT_DISCONNECT,
+    WORKER_UNKNOWNCOMMAND
+}
