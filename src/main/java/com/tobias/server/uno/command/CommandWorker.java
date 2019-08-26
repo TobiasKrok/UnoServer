@@ -46,7 +46,7 @@ public class CommandWorker implements Runnable{
     }
 
     private Command parseCommand(String command) {
-        int id = Character.getNumericValue(command.charAt(3));
+        System.out.println(command);
         // Set the commandType to an unknown commandType. If we can't convert the passed commandType to a CommandType, WORKER_UNKNOWNCOMMAND will be returned.
         CommandType cmdType = CommandType.WORKER_UNKNOWNCOMMAND;
         String data = "";

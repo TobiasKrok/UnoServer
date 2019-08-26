@@ -19,4 +19,8 @@ public class Command {
     public CommandType getType() {
         return type;
     }
+
+    public String toString() {
+        return "TYPE:" + type + " DATA:" + data;
+    }
 }

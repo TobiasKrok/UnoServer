@@ -7,8 +7,10 @@ import com.tobias.server.uno.client.UnoClientManager;
 import com.tobias.server.uno.command.Command;
 import com.tobias.server.uno.command.CommandType;
 import com.tobias.server.uno.command.CommandWorker;
+import com.tobias.server.uno.handlers.ClientCommandHandler;
 import com.tobias.server.uno.handlers.CommandHandler;
 import com.tobias.server.uno.handlers.GameCommandHandler;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -30,32 +32,35 @@ public class UnoServer implements Runnable{
         this.clients = new ArrayList<>();
         this.handlers = new HashMap<>();
         this.port = port;
-
+        this.handlers.put("CLIENT",new ClientCommandHandler());
     }
 
     public void run(){
         this.running = true;
         this.accepting = true;
         try(ServerSocket socket = new ServerSocket(this.port)){
+            System.out.println("[NET] - Server started on port " + this.port + " and address " + socket.getInetAddress());
             while (running){
                 if(accepting) {
                     UnoClient unoClient = new UnoClient(socket.accept(), clients.size(),new CommandWorker(handlers));
+                    System.out.println("[NET] - Connection from: " + unoClient.getIpAddress());
                     new Thread(unoClient).start();
                     clients.add(unoClient);
                     unoClientManager.addClient(unoClient);
+                    unoClientManager.sendToClient(unoClient,new Command(CommandType.CLIENT_REGISTERID,Integer.toString(unoClient.getId())));
+                    if(clients.size() == 2) {
+                        accepting = false;
+                    }
                 }
             }
         } catch (IOException e) {
-            System.out.println("socket server error: " + e.getMessage());
+            System.out.println("[NET - ERROR}: " + e.getMessage());
         }
     }
     public boolean isRunning(){
         return this.running;
     }
-    private void initiateHandlers() {
 
-        //handlers.put("CLIENT",new ClientCommandHandler())
-    }
     public void setGameInstance(Game game){
         this.game = game;
         // We create a new GameCommandHandler every time a new game starts.
