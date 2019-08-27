@@ -6,8 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class
-UnoClientManager {
+public class UnoClientManager {
    private List<UnoClient> unoClients;
 
 
@@ -41,6 +40,9 @@ UnoClientManager {
             unoClient.close();
         }
 
+    }
+    public List<UnoClient> getClients() {
+        return this.unoClients;
     }
 
     public void sendToAllClients(Command command){
