@@ -1,6 +1,7 @@
 package com.tobias.server.uno.client;
 
 import com.tobias.server.uno.command.Command;
+import com.tobias.server.uno.command.CommandType;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,11 +22,7 @@ public class UnoClientManager {
     }
 
     public void removeClient(UnoClient client) {
-        for (UnoClient c : unoClients) {
-            if(c == client) {
-                unoClients.remove(c);
-            }
-        }
+        unoClients.remove(client);
     }
     public int getNumberOfClients(){
         return unoClients.size();
@@ -39,7 +36,18 @@ public class UnoClientManager {
             System.out.println("Write failed to client:" + unoClient.getId() + " - ERROR: " + e.getMessage());
             unoClient.close();
         }
+    }
 
+    public List<UnoClient> checkForDisconnect() {
+        List<UnoClient> disc = new ArrayList<>();
+        for (UnoClient client : unoClients) {
+            sendToClient(client, new Command(CommandType.CLIENT_POLL, ""));
+            if (client.isDisconnected()) {
+                disc.add(client);
+                removeClient(client);
+            }
+        }
+        return disc;
     }
     public List<UnoClient> getClients() {
         return this.unoClients;

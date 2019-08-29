@@ -5,8 +5,6 @@ import com.tobias.server.uno.command.CommandWorker;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
 public class UnoClient implements Runnable {
 
@@ -15,16 +13,17 @@ public class UnoClient implements Runnable {
     private BufferedWriter output;
     private boolean ready;
     private int id;
-    private List<Integer> usedId;
+    private Thread workerThread;
     private CommandWorker worker;
     private String ipAddress;
+    private boolean disconnected;
 
     public UnoClient(Socket socket, int id, CommandWorker worker) {
-        this.usedId = new ArrayList<>();
         this.worker = worker;
         this.id = id;
         this.ready = false;
         this.ipAddress = socket.getRemoteSocketAddress().toString();
+        this.disconnected = false;
         try {
             this.output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -34,8 +33,8 @@ public class UnoClient implements Runnable {
     }
 
     public void run() {
-        Thread t = new Thread(this.worker);
-        t.start();
+        this.workerThread = new Thread(this.worker);
+        workerThread.start();
         while (true) {
             try {
                 if (input.ready()) {
@@ -78,6 +77,10 @@ public class UnoClient implements Runnable {
         try {
             output.close();
             input.close();
+            System.out.println("[CLIENT-" + id + "} - " + "CLOSED SOCKET INPUT/OUTPUT");
+            Thread.currentThread().interrupt();
+            System.out.println("[CLIENT-" + id + "} - " + "STOPPED THREAD");
+            this.disconnected = true;
         } catch (IOException e) {
             System.out.println("Input/Output close error: " + e.getMessage());
         }
@@ -96,5 +99,9 @@ public class UnoClient implements Runnable {
 
     public int getId() {
         return this.id;
+    }
+
+    public boolean isDisconnected() {
+        return this.disconnected;
     }
 }

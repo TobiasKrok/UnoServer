@@ -36,6 +36,7 @@ public class UnoServer implements Runnable{
     public void run(){
         this.running = true;
         this.accepting = true;
+        List<UnoClient> disconnectedClients;
         try(ServerSocket socket = new ServerSocket(this.port)){
             System.out.println("[NET] - Server started on port " + this.port + " and address " + socket.getInetAddress());
             while (running){
@@ -47,6 +48,13 @@ public class UnoServer implements Runnable{
                     unoClientManager.sendToClient(unoClient,new Command(CommandType.CLIENT_REGISTERID,Integer.toString(unoClient.getId())));
                     if(getUnoClients().size() == 2) {
                         accepting = false;
+                    }
+                }
+                disconnectedClients = unoClientManager.checkForDisconnect();
+                if(disconnectedClients.size() > 0) {
+                    for (UnoClient client : getUnoClients()) {
+                        handlers.get("PLAYER").process(new Command(CommandType.PLAYER_DISCONNECT,Integer.toString(client.getId())),client);
+                        handlers.get("CLIENT").process(new Command(CommandType.CLIENT_DISCONNECT,Integer.toString(client.getId())),client);
                     }
                 }
             }
