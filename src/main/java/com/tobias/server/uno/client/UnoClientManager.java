@@ -5,6 +5,7 @@ import com.tobias.server.uno.command.CommandType;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class UnoClientManager {
@@ -40,11 +41,13 @@ public class UnoClientManager {
 
     public List<UnoClient> checkForDisconnect() {
         List<UnoClient> disc = new ArrayList<>();
-        for (UnoClient client : unoClients) {
-            sendToClient(client, new Command(CommandType.CLIENT_POLL, ""));
-            if (client.isDisconnected()) {
-                disc.add(client);
-                removeClient(client);
+        Iterator<UnoClient> iter = unoClients.iterator();
+        while(iter.hasNext()){
+            UnoClient c= iter.next();
+            sendToClient(c, new Command(CommandType.CLIENT_POLL, ""));
+            if (c.isDisconnected()) {
+                disc.add(c);
+                iter.remove();
             }
         }
         return disc;

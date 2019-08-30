@@ -74,16 +74,16 @@ public class UnoClient implements Runnable {
     }
 
     void close() {
-        try {
-            output.close();
-            input.close();
+        //try {
+           // output.close();
+            //input.close();
             System.out.println("[CLIENT-" + id + "} - " + "CLOSED SOCKET INPUT/OUTPUT");
             Thread.currentThread().interrupt();
             System.out.println("[CLIENT-" + id + "} - " + "STOPPED THREAD");
             this.disconnected = true;
-        } catch (IOException e) {
-            System.out.println("Input/Output close error: " + e.getMessage());
-        }
+        //} catch (IOException e) {
+          //  System.out.println("Input/Output close error: " + e.getMessage());
+        //}
     }
 
     void write(String command) throws IOException {
