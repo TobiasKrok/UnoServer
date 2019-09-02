@@ -1,5 +1,6 @@
 package com.tobias.server.uno;
 
+
 import com.tobias.game.Game;
 import com.tobias.game.Player;
 import com.tobias.server.uno.client.UnoClient;
@@ -10,6 +11,8 @@ import com.tobias.server.uno.command.CommandWorker;
 import com.tobias.server.uno.handlers.ClientCommandHandler;
 import com.tobias.server.uno.handlers.CommandHandler;
 import com.tobias.server.uno.handlers.GameCommandHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -17,44 +20,56 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class UnoServer implements Runnable{
+
     private Map<String, CommandHandler> handlers;
     private UnoClientManager unoClientManager;
+    private Game game;
+    private static final Logger LOGGER = LogManager.getLogger(UnoServer.class.getName());
     private boolean running;
     private boolean accepting;
-    private Game game;
     private int port;
 
     public UnoServer (int port){
         this.unoClientManager = new UnoClientManager();
         this.handlers = new HashMap<>();
         this.port = port;
-        this.handlers.put("CLIENT",new ClientCommandHandler());
+        this.handlers.put("CLIENT",new ClientCommandHandler(unoClientManager));
     }
 
     public void run(){
         this.running = true;
         this.accepting = true;
         List<UnoClient> disconnectedClients;
+        ScheduledExecutorService ses;
         try(ServerSocket socket = new ServerSocket(this.port)){
-            System.out.println("[NET] - Server started on port " + this.port + " and address " + socket.getInetAddress());
+            LOGGER.info("Server started on port " + this.port);
+            ses = Executors.newSingleThreadScheduledExecutor();
+            ses.scheduleAtFixedRate(new Runnable() {
+                @Override
+                public void run() {
+                    List<UnoClient> clients = unoClientManager.checkForDisconnect();
+                    if(clients.size() > 0) {
+                        for (UnoClient client : clients) {
+                            // handlers.get("PLAYER").process(new Command(CommandType.PLAYER_DISCONNECT,Integer.toString(client.getId())),client);
+                            handlers.get("CLIENT").process(new Command(CommandType.CLIENT_DISCONNECT,Integer.toString(client.getId())),client);
+                        }
+                    }
+                }
+            },0,8, TimeUnit.SECONDS);
             while (running){
                 if(accepting) {
                     UnoClient unoClient = new UnoClient(socket.accept(), getUnoClients().size(),new CommandWorker(handlers));
-                    System.out.println("[NET] - Connection from: " + unoClient.getIpAddress());
+                    LOGGER.info("Client connected: " + unoClient.getIpAddress());
                     new Thread(unoClient).start();
                     unoClientManager.addClient(unoClient);
                     unoClientManager.sendToClient(unoClient,new Command(CommandType.CLIENT_REGISTERID,Integer.toString(unoClient.getId())));
-                    if(getUnoClients().size() == 2) {
+                    if(getUnoClients().size() == 4) {
                         accepting = false;
-                    }
-                }
-                disconnectedClients = unoClientManager.checkForDisconnect();
-                if(disconnectedClients.size() > 0) {
-                    for (UnoClient client : getUnoClients()) {
-                       // handlers.get("PLAYER").process(new Command(CommandType.PLAYER_DISCONNECT,Integer.toString(client.getId())),client);
-                        handlers.get("CLIENT").process(new Command(CommandType.CLIENT_DISCONNECT,Integer.toString(client.getId())),client);
                     }
                 }
             }

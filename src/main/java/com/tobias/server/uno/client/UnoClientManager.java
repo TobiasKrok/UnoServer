@@ -58,7 +58,7 @@ public class UnoClientManager {
 
     public void sendToAllClients(Command command){
         for(UnoClient unoClient : unoClients){
-       //     unoClient.write(command.toString());
+           sendToClient(unoClient,command);
         }
     }
 }

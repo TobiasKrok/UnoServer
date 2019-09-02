@@ -34,6 +34,7 @@ public class UnoClient implements Runnable {
 
     public void run() {
         this.workerThread = new Thread(this.worker);
+        this.workerThread.setName("Client-"Integer.toString(this.id) + "");
         workerThread.start();
         while (true) {
             try {
@@ -77,8 +78,9 @@ public class UnoClient implements Runnable {
         //try {
            // output.close();
             //input.close();
-            System.out.println("[CLIENT-" + id + "} - " + "CLOSED SOCKET INPUT/OUTPUT");
+           // System.out.println("[CLIENT-" + id + "} - " + "CLOSED SOCKET INPUT/OUTPUT");
             Thread.currentThread().interrupt();
+            workerThread.interrupt();
             System.out.println("[CLIENT-" + id + "} - " + "STOPPED THREAD");
             this.disconnected = true;
         //} catch (IOException e) {
