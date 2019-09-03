@@ -16,6 +16,7 @@ public class UnoClientManager {
 
     public UnoClientManager() {
         this.unoClients = new ArrayList<>();
+        Thread.currentThread().setName("UnoClientManager-" + Thread.currentThread().getId());
     }
 
     public void addClient(UnoClient unoClient){

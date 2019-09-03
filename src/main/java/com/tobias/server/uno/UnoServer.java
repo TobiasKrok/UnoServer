@@ -65,7 +65,9 @@ public class UnoServer implements Runnable{
                 if(accepting) {
                     UnoClient unoClient = new UnoClient(socket.accept(), getUnoClients().size(),new CommandWorker(handlers));
                     LOGGER.info("Client connected: " + unoClient.getIpAddress());
-                    new Thread(unoClient).start();
+                    Thread clientThread = new Thread(unoClient);
+                    clientThread.setName("UnoClient-" + unoClient.getId());
+                    clientThread.start();
                     unoClientManager.addClient(unoClient);
                     unoClientManager.sendToClient(unoClient,new Command(CommandType.CLIENT_REGISTERID,Integer.toString(unoClient.getId())));
                     if(getUnoClients().size() == 4) {

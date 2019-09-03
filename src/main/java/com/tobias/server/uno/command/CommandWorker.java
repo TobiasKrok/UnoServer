@@ -41,7 +41,7 @@ public class CommandWorker implements Runnable{
                 }
             }
             Command c = parseCommand(queue.get(0).getStringCommand());
-            System.out.println("[NET - RECEIVED] " + c.toString());
+            LOGGER.debug("Command received from Client " +  queue.get(0).getUnoClient().getId() + ": " + c.toString());
             if(!(c.getType() == CommandType.WORKER_UNKNOWNCOMMAND)) {
                 getHandlerForCommand(c).process(c,queue.get(0).getUnoClient());
             }
@@ -58,7 +58,7 @@ public class CommandWorker implements Runnable{
            cmdType = CommandType.valueOf(command.substring(command.indexOf("TYPE:") + 5,command.indexOf("DATA:") - 1));
            data = command.substring(command.indexOf("DATA:") + 5);
         } catch (IllegalArgumentException e){
-            System.out.println("Could not bind Type: " + (command.substring(command.indexOf("TYPE:") + 5,command.indexOf("DATA:"))) + " to a CommandType");
+            LOGGER.error("Could not bind Type: " + (command.substring(command.indexOf("TYPE:") + 5,command.indexOf("DATA:"))) + " to a CommandType");
         }
         return new Command(cmdType,data);
     }
