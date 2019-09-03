@@ -2,6 +2,8 @@ package com.tobias.server.uno.client;
 
 import com.tobias.server.uno.command.Command;
 import com.tobias.server.uno.command.CommandType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,7 +12,7 @@ import java.util.List;
 
 public class UnoClientManager {
    private List<UnoClient> unoClients;
-
+   private static final Logger LOGGER = LogManager.getLogger(UnoClientManager.class.getName());
 
     public UnoClientManager() {
         this.unoClients = new ArrayList<>();
@@ -32,9 +34,9 @@ public class UnoClientManager {
     public void sendToClient(UnoClient unoClient, Command command) {
         try {
             unoClient.write(command.toString());
-            System.out.println("[COMMAND] - " + command.toString() + "\n[CLIENT]  - " + unoClient.getId() + "\n");
+            LOGGER.debug("Command sent to Client " + unoClient.getId() + ": " + command.toString());
         } catch (IOException e){
-            System.out.println("Write failed to client:" + unoClient.getId() + " - ERROR: " + e.getMessage());
+            LOGGER.error("Failed to write to Client " + unoClient.getId(),e);
             unoClient.close();
         }
     }
@@ -43,7 +45,7 @@ public class UnoClientManager {
         List<UnoClient> disc = new ArrayList<>();
         Iterator<UnoClient> iter = unoClients.iterator();
         while(iter.hasNext()){
-            UnoClient c= iter.next();
+            UnoClient c = iter.next();
             sendToClient(c, new Command(CommandType.CLIENT_POLL, ""));
             if (c.isDisconnected()) {
                 disc.add(c);

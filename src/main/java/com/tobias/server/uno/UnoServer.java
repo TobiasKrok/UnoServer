@@ -42,9 +42,9 @@ public class UnoServer implements Runnable{
     }
 
     public void run(){
+        Thread.currentThread().setName("UnoServer-" + Thread.currentThread().getId());
         this.running = true;
         this.accepting = true;
-        List<UnoClient> disconnectedClients;
         ScheduledExecutorService ses;
         try(ServerSocket socket = new ServerSocket(this.port)){
             LOGGER.info("Server started on port " + this.port);
@@ -74,7 +74,7 @@ public class UnoServer implements Runnable{
                 }
             }
         } catch (IOException e) {
-            System.out.println("[NET - ERROR}: " + e.getMessage());
+            LOGGER.error("Server IO exception",e);
         }
     }
     public boolean isRunning(){

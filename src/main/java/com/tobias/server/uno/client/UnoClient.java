@@ -2,6 +2,8 @@ package com.tobias.server.uno.client;
 
 import com.tobias.game.Player;
 import com.tobias.server.uno.command.CommandWorker;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.Socket;
@@ -17,6 +19,7 @@ public class UnoClient implements Runnable {
     private CommandWorker worker;
     private String ipAddress;
     private boolean disconnected;
+    private static final Logger LOGGER = LogManager.getLogger(UnoClient.class.getName());
 
     public UnoClient(Socket socket, int id, CommandWorker worker) {
         this.worker = worker;
@@ -36,6 +39,7 @@ public class UnoClient implements Runnable {
         this.workerThread = new Thread(this.worker);
         this.workerThread.setName("CommandWorker-" + Integer.toString(this.id));
         workerThread.start();
+        LOGGER.debug("Worker for client " + id + " started!");
         while (true) {
             try {
                 if (input.ready()) {
@@ -75,17 +79,11 @@ public class UnoClient implements Runnable {
     }
 
     void close() {
-        //try {
-           // output.close();
-            //input.close();
-           // System.out.println("[CLIENT-" + id + "} - " + "CLOSED SOCKET INPUT/OUTPUT");
-            Thread.currentThread().interrupt();
-            workerThread.interrupt();
-            System.out.println("[CLIENT-" + id + "} - " + "STOPPED THREAD");
-            this.disconnected = true;
-        //} catch (IOException e) {
-          //  System.out.println("Input/Output close error: " + e.getMessage());
-        //}
+        workerThread.interrupt();
+        this.disconnected = true;
+        Thread.currentThread().interrupt();
+        LOGGER.warn("Client " + id + " gracefully disconnected.");
+
     }
 
     void write(String command) throws IOException {
