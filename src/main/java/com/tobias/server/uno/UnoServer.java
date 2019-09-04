@@ -76,7 +76,7 @@ public class UnoServer implements Runnable{
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("Server IO exception",e);
+            LOGGER.fatal("Server IO exception",e);
         }
     }
     public boolean isRunning(){

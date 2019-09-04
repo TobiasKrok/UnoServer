@@ -14,9 +14,10 @@ public class UnoClientManager {
    private List<UnoClient> unoClients;
    private static final Logger LOGGER = LogManager.getLogger(UnoClientManager.class.getName());
 
+
     public UnoClientManager() {
         this.unoClients = new ArrayList<>();
-        Thread.currentThread().setName("UnoClientManager-" + Thread.currentThread().getId());
+
     }
 
     public void addClient(UnoClient unoClient){

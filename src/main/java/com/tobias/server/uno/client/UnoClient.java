@@ -48,10 +48,10 @@ public class UnoClient implements Runnable {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
-                        System.out.println("input.ready() thread sleep interrupted: " + e.getMessage());
+                        LOGGER.error("Thread.sleep interrupted", e);
                     }
             } catch (IOException e) {
-                System.out.println(e.getMessage());
+                LOGGER.error("Error reading input",e);
             }
         }
     }
