@@ -14,7 +14,8 @@ public class Main {
             if(unoServer.getUnoClients().size() == 4){
                 unoServer.setAccepting(false);
                 Game game = new Game();
-                game.setPlayers(unoServer.getPlayersFromClients());
+                game.setPlayers(unoServer.getPlayerFromClients());
+
             }
 /*            Game game = new Game();
             List<Player> players = new ArrayList<>();

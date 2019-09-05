@@ -70,9 +70,6 @@ public class UnoServer implements Runnable{
                     clientThread.start();
                     unoClientManager.addClient(unoClient);
                     unoClientManager.sendToClient(unoClient,new Command(CommandType.CLIENT_REGISTERID,Integer.toString(unoClient.getId())));
-                    if(getUnoClients().size() == 4) {
-                        accepting = false;
-                    }
                 }
             }
         } catch (IOException e) {
@@ -104,7 +101,7 @@ public class UnoServer implements Runnable{
         return unoClientManager.getClients();
     }
 
-    public List<Player> getPlayersFromClients() {
+    public List<Player> getPlayerFromClients() {
         List<Player> players = new ArrayList<>();
         for (UnoClient c : getUnoClients()){
             players.add(c.getPlayer());
