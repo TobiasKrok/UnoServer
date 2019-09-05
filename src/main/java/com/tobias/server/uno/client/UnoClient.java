@@ -39,8 +39,8 @@ public class UnoClient implements Runnable {
         this.workerThread = new Thread(this.worker);
         this.workerThread.setName("CommandWorker-" + Integer.toString(this.id));
         workerThread.start();
-        LOGGER.debug("Worker for client " + id + " started!");
-        while (true) {
+        LOGGER.debug("Worker for Client " + id + " started!");
+        while (!disconnected) {
             try {
                 if (input.ready()) {
                     worker.processCommand(read(), this);
