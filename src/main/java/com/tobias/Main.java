@@ -10,12 +10,13 @@ public class Main {
     public static void main(String[] args) {
         UnoServer unoServer = new UnoServer(5000);
         new Thread(unoServer).start();
-        while (unoServer.isRunning()) {
-            if(unoServer.getUnoClients().size() == 4){
-                unoServer.setAccepting(false);
-                Game game = new Game();
-                game.setPlayers(unoServer.getPlayerFromClients());
-
+        while (true) {
+            if(unoServer.isRunning()) {
+                if (unoServer.getUnoClients().size() == 4) {
+                    unoServer.setAccepting(false);
+                    Game game = new Game();
+                    game.setPlayers(unoServer.getPlayerFromClients());
+                }
             }
 /*            Game game = new Game();
             List<Player> players = new ArrayList<>();

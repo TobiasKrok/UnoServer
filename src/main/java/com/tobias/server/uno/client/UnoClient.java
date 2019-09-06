@@ -25,6 +25,7 @@ public class UnoClient implements Runnable {
         this.worker = worker;
         this.id = id;
         this.ready = false;
+        this.player = new Player(this.id);
         this.ipAddress = socket.getRemoteSocketAddress().toString();
         this.disconnected = false;
         try {
@@ -96,6 +97,7 @@ public class UnoClient implements Runnable {
     public Player getPlayer() {
         return this.player;
     }
+
 
     public int getId() {
         return this.id;
