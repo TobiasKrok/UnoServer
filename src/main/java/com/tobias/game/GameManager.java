@@ -1,5 +1,6 @@
 package com.tobias.game;
 
+import com.tobias.game.card.Card;
 import com.tobias.game.card.Table;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public class GameManager {
     }
 
 
-    public void draw(Player player, int n) {
+    public List<Card> draw(Player player, int n) {
         table.deal(player,n);
     }
 }

@@ -57,11 +57,11 @@ public class UnoServer implements Runnable{
                 if(getUnoClients().size() == 4) {
                     accepting = false;
                     if(game == null || !game.isInProgress()) {
-                        System.out.println("HAHA");
                         this.game = new Game();
                         handlers.put("PLAYER",new GameCommandHandler(game.getGameManager(),this.unoClientManager));
-                        this.game.start();
+                        game.setPlayers(getPlayerFromClients());
                         initializeGame();
+                        this.game.start();
                     }
                 }
             }
