@@ -17,6 +17,8 @@ public class ClientCommandHandler implements CommandHandler {
     public void process(Command command, UnoClient unoClient) {
         if(command.getType() == CommandType.CLIENT_DISCONNECT) {
             handleClientDisconnect(command.getData());
+        } else if(command.getType() == CommandType.CLIENT_REGISTERID) {
+            clientManager.sendToClient(unoClient,command);
         }
     }
 

@@ -1,6 +1,5 @@
 package com.tobias;
 
-import com.tobias.game.Game;
 import com.tobias.server.uno.UnoServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,15 +9,9 @@ public class Main {
     public static void main(String[] args) {
 
         UnoServer unoServer = new UnoServer(Integer.parseInt(args[0]));
+        UnoServer.maxPlayers = Integer.parseInt(args[1]);
         new Thread(unoServer).start();
-        while (true) {
-            if(unoServer.isRunning()) {
-                if (unoServer.getUnoClients().size() == 4) {
-                    unoServer.setAccepting(false);
-                    Game game = new Game();
-                    game.setPlayers(unoServer.getPlayerFromClients());
-                }
-            }
+
 /*            Game game = new Game();
             List<Player> players = new ArrayList<>();
             for (UnoClient c : unoServer.getUnoClients()) {
@@ -32,5 +25,4 @@ public class Main {
 
             unoServer.setGameInstance(game);*/
         }
-    }
 }

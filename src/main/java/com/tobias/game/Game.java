@@ -1,6 +1,7 @@
 package com.tobias.game;
 
 import com.tobias.game.card.Table;
+import com.tobias.server.uno.UnoServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,8 +34,8 @@ public class Game {
         LOGGER.info("Game started with " + players.size() + " players!");
     }
     public void setPlayers(List<Player> players) throws InvalidParameterException {
-        if(players.size() < 4) {
-            throw new InvalidParameterException("Player size cannot be less than 4. Current size is " + players.size());
+        if(players.size() < UnoServer.maxPlayers) {
+            throw new InvalidParameterException("Player size cannot be less than " + UnoServer.maxPlayers + " Current size is " + players.size());
         }
         for(Player p : players) {
             p.clearHand();

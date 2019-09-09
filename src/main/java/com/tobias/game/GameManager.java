@@ -4,6 +4,7 @@ import com.tobias.game.card.Card;
 import com.tobias.game.card.Table;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GameManager {
     private List<Player> players;
@@ -15,7 +16,10 @@ public class GameManager {
     }
 
 
-    public List<Card> draw(Player player, int n) {
-        table.deal(player,n);
+    public String draw(Player player, int n) {
+       List<Card> cards = table.deal(player,n);
+       return cards.stream()
+               .map(Card::toString)
+               .collect(Collectors.joining(","));
     }
 }

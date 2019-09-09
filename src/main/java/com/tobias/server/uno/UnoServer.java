@@ -33,6 +33,7 @@ public class UnoServer implements Runnable{
     private boolean running;
     private boolean accepting;
     private int port;
+    public static int maxPlayers;
 
     public UnoServer (int port){
         this.unoClientManager = new UnoClientManager();
@@ -54,7 +55,7 @@ public class UnoServer implements Runnable{
                     LOGGER.info("Client connected: " + unoClient.getIpAddress());
                     initiateClient(unoClient);
                 }
-                if(getUnoClients().size() == 4) {
+                if(getUnoClients().size() == maxPlayers) {
                     accepting = false;
                     if(game == null || !game.isInProgress()) {
                         this.game = new Game();
@@ -77,7 +78,8 @@ public class UnoServer implements Runnable{
         clientThread.setName("UnoClient-" + unoClient.getId());
         clientThread.start();
         unoClientManager.addClient(unoClient);
-        unoClientManager.sendToClient(unoClient,new Command(CommandType.CLIENT_REGISTERID,Integer.toString(unoClient.getId())));
+        handlers.get("CLIENT").process(new Command(CommandType.CLIENT_REGISTERID,Integer.toString(unoClient.getId())),unoClient);
+
     }
 
     private void initializeGame() {

@@ -19,8 +19,8 @@ public class GameCommandHandler implements CommandHandler {
     @Override
     public void process(Command command, UnoClient unoClient) {
         if(command.getType() == CommandType.PLAYER_DRAWCARD) {
-            gameManager.draw(unoClient.getPlayer(),7);
-        }
+            unoClientManager.sendToClient(unoClient,new Command(CommandType.PLAYER_DRAWCARD,gameManager.draw(unoClient.getPlayer(),Integer.parseInt(command.getData()))));
+        } else if(command.getType() == CommandType.)
     }
 
 }

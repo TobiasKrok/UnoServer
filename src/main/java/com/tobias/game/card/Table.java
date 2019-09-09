@@ -31,10 +31,16 @@ public class Table {
         cardsOnTable.addAll(cards);
     }
 
-    public void deal(Player p, int n){
-        List<Card> cards = new ArrayList<>();
-        // deck.draw(cards,n);
-        p.draw(cards);
+    public List<Card> deal(Player p, int n){
+        if(deck.getDeckCount() >= n) {
+            List<Card> cards = deck.draw(n);
+            p.addToHand(cards);
+            // Return cards so we can inform client
+            return cards;
+        } else {
+            //TODO shuffle cards on table and put back in deck
+        }
+        return null;
     }
 
 }
