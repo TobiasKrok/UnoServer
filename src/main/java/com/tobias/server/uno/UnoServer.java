@@ -2,6 +2,7 @@ package com.tobias.server.uno;
 
 
 import com.tobias.game.Game;
+import com.tobias.game.GameManager;
 import com.tobias.game.Player;
 import com.tobias.server.uno.client.UnoClient;
 import com.tobias.server.uno.client.UnoClientManager;
@@ -28,7 +29,7 @@ public class UnoServer implements Runnable{
 
     private Map<String, CommandHandler> handlers;
     private UnoClientManager unoClientManager;
-    private Game game;
+    private GameManager gameManager;
     private static final Logger LOGGER = LogManager.getLogger(UnoServer.class.getName());
     private boolean running;
     private boolean accepting;
@@ -37,9 +38,11 @@ public class UnoServer implements Runnable{
 
     public UnoServer (int port){
         this.unoClientManager = new UnoClientManager();
+        this.gameManager = new GameManager();
         this.handlers = new HashMap<>();
         this.port = port;
         this.handlers.put("CLIENT",new ClientCommandHandler(unoClientManager));
+        handlers.put("PLAYER",new GameCommandHandler(gameManager,this.unoClientManager));
     }
 
     public void run(){
@@ -48,7 +51,7 @@ public class UnoServer implements Runnable{
         this.accepting = true;
         try(ServerSocket socket = new ServerSocket(this.port)){
             startPolling();
-            LOGGER.info("Server started on port " + this.port);
+            LOGGER.info("Server started on port " + this.port + " with max players allowed: " + maxPlayers);
             while (running){
                 if(accepting) {
                     UnoClient unoClient = new UnoClient(socket.accept(), getUnoClients().size(),new CommandWorker(handlers));
@@ -59,7 +62,7 @@ public class UnoServer implements Runnable{
                     accepting = false;
                     if(game == null || !game.isInProgress()) {
                         this.game = new Game();
-                        handlers.put("PLAYER",new GameCommandHandler(game.getGameManager(),this.unoClientManager));
+
                         game.setPlayers(getPlayerFromClients());
                         initializeGame();
                         this.game.start();

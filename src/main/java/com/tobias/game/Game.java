@@ -1,5 +1,6 @@
 package com.tobias.game;
 
+import com.tobias.game.card.Card;
 import com.tobias.game.card.Table;
 import com.tobias.server.uno.UnoServer;
 import org.apache.logging.log4j.LogManager;
@@ -8,23 +9,21 @@ import org.apache.logging.log4j.Logger;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Game {
     private List<Player> players;
-    private GameManager gameManager;
+    private int gameId;
     private Table table;
     private boolean inProgress;
     private static final Logger LOGGER = LogManager.getLogger(Game.class.getName());
 
-    public Game() {
+    public Game(int gameId) {
         this.table = new Table();
         this.players = new ArrayList<>();
-        this.gameManager = new GameManager(table,players);
     }
 
-    public GameManager getGameManager(){
-        return this.gameManager;
-    }
+
 
     public boolean isInProgress() {
         return this.inProgress;
@@ -41,6 +40,13 @@ public class Game {
             p.clearHand();
         }
         this.players = players;
+    }
+
+    public String draw(Player player, int n) {
+        List<Card> cards = table.deal(player,n);
+        return cards.stream()
+                .map(Card::toString)
+                .collect(Collectors.joining(","));
     }
 
     protected Table getTable() {
