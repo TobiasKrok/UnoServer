@@ -10,7 +10,9 @@ public class GameManager {
         this.games = new ArrayList<>();
     }
 
-    public Game mewGame(List<Player> players) {
-        this.games
+    public Game newGame(List<Player> players) {
+        Game game = new Game(games.size(),players);
+        this.games.add(game);
+        return game;
     }
 }

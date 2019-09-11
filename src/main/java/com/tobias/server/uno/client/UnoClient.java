@@ -32,7 +32,7 @@ public class UnoClient implements Runnable {
             this.output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+           LOGGER.error("Failed initializing BufferedReader/Writer",e);
         }
     }
 
@@ -74,7 +74,7 @@ public class UnoClient implements Runnable {
             return input.readLine();
 
         } catch (IOException e) {
-            System.out.println("GameServer read error: " + e.getMessage());
+            LOGGER.fatal("Error on reading input!",e);
         }
         return null;
     }
@@ -84,7 +84,6 @@ public class UnoClient implements Runnable {
         this.disconnected = true;
         Thread.currentThread().interrupt();
         LOGGER.warn("Client " + id + " gracefully disconnected.");
-
     }
 
     void write(String command) throws IOException {

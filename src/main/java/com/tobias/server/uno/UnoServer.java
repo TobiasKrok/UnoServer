@@ -1,7 +1,6 @@
 package com.tobias.server.uno;
 
 
-import com.tobias.game.Game;
 import com.tobias.game.GameManager;
 import com.tobias.game.Player;
 import com.tobias.server.uno.client.UnoClient;
@@ -60,13 +59,7 @@ public class UnoServer implements Runnable{
                 }
                 if(getUnoClients().size() == maxPlayers) {
                     accepting = false;
-                    if(game == null || !game.isInProgress()) {
-                        this.game = new Game();
-
-                        game.setPlayers(getPlayerFromClients());
-                        initializeGame();
-                        this.game.start();
-                    }
+                    gameManager.newGame(getPlayerFromClients());
                 }
             }
         } catch (IOException e) {
