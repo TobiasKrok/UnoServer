@@ -41,7 +41,9 @@ public class Game {
         }
         this.players = players;
     }
-
+    public int getGameId() {
+        return this.gameId;
+    }
     public String draw(Player player, int n) {
         List<Card> cards = table.deal(player,n);
         return cards.stream()

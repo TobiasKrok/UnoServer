@@ -60,13 +60,15 @@ public class UnoServer implements Runnable{
                 }
                 if(getUnoClients().size() == maxPlayers) {
                     accepting = false;
-                    if(game == null || !game.isInProgress()) {
-                        this.game = new Game();
-
-                        game.setPlayers(getPlayerFromClients());
-                        initializeGame();
-                        this.game.start();
+                    List<Player> players = new ArrayList<>();
+                    for(Player p : getPlayerFromClients()) {
+                        if(!p.isInGame()) {
+                            players.add(p);
+                        }
                     }
+                    Game game = gameManager.newGame(players);
+                    game.start();
+                    initializeGame(game.getGameId());
                 }
             }
         } catch (IOException e) {
@@ -85,11 +87,11 @@ public class UnoServer implements Runnable{
 
     }
 
-    private void initializeGame() {
+    private void initializeGame(int gameId) {
         for (UnoClient c : getUnoClients()) {
+            handlers.get("PLAYER").process(new Command(CommandType.PLAYER_GAMESTART,Integer.toString(gameId)), c);
+            handlers.get("PLAYER").process(new Command(CommandType.PLAYER_REGISTEROPPONENTPLAYER,String.valueOf(getUnoClients().size())), c);
             handlers.get("PLAYER").process(new Command(CommandType.PLAYER_DRAWCARD,"7"), c);
-            handlers.get("CLIENT").process(new Command(CommandType.CLIENT_REGISTEROPPONENTPLAYER,String.valueOf(getUnoClients().size() - 1)), c);
-            handlers.get("CLIENT").process(new Command(CommandType.CLIENT_GAMESTART,""), c);
         }
     }
     private void startPolling() {
