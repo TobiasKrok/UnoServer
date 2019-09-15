@@ -2,11 +2,9 @@ package com.tobias.game;
 
 import com.tobias.game.card.Card;
 import com.tobias.game.card.Table;
-import com.tobias.server.uno.UnoServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,8 +16,9 @@ public class Game {
     private boolean inProgress;
     private static final Logger LOGGER = LogManager.getLogger(Game.class.getName());
 
-    public Game(int gameId) {
+    public Game(int gameId, List<Player> players) {
         this.table = new Table();
+        this.players = players;
         this.players = new ArrayList<>();
     }
 
