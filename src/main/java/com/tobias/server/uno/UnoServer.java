@@ -1,6 +1,7 @@
 package com.tobias.server.uno;
 
 
+import com.tobias.game.Game;
 import com.tobias.game.GameManager;
 import com.tobias.game.Player;
 import com.tobias.server.uno.client.UnoClient;
@@ -60,6 +61,7 @@ public class UnoServer implements Runnable{
                 if(getUnoClients().size() == maxPlayers) {
                     accepting = false;
                     List<Player> players = new ArrayList<>();
+                    List<Integer> playerIds = new ArrayList<>();
                     for(Player p : getPlayerFromClients()) {
                         if(!p.isInGame()) {
                             players.add(p);
@@ -67,7 +69,7 @@ public class UnoServer implements Runnable{
                     }
                     Game game = gameManager.newGame(players);
                     game.start();
-                    initializeGame(game.getGameId());
+                    initializeGame(game.getGameId(),);
                 }
             }
         } catch (IOException e) {
@@ -87,11 +89,10 @@ public class UnoServer implements Runnable{
     }
 
     private void initializeGame(int gameId) {
-        for (UnoClient c : getUnoClients()) {
-            handlers.get("PLAYER").process(new Command(CommandType.PLAYER_GAMESTART,Integer.toString(gameId)), c);
-            handlers.get("PLAYER").process(new Command(CommandType.PLAYER_REGISTEROPPONENTPLAYER,String.valueOf(getUnoClients().size())), c);
-            handlers.get("PLAYER").process(new Command(CommandType.PLAYER_DRAWCARD,"7"), c);
-        }
+        for (UnoClient client : getUnoClients())
+        handlers.get("PLAYER").process(new Command(CommandType.PLAYER_GAMESTART,Integer.toString(gameId)));
+        handlers.get("PLAYER").process(new Command(CommandType.PLAYER_REGISTEROPPONENTPLAYER,String.join(',')));
+        handlers.get("PLAYER").process(new Command(CommandType.PLAYER_DRAWCARD,"7"), c);
     }
     private void startPolling() {
         ScheduledExecutorService ses;
@@ -103,7 +104,7 @@ public class UnoServer implements Runnable{
                 if(clients.size() > 0) {
                     for (UnoClient client : clients) {
                         // handlers.get("PLAYER").process(new Command(CommandType.PLAYER_DISCONNECT,Integer.toString(client.getId())),client);
-                        handlers.get("CLIENT").process(new Command(CommandType.CLIENT_DISCONNECT,Integer.toString(client.getId())),client);
+                        handlers.get("CLIENT").process(new Command(CommandType.CLIENT_DISCONNECT,Integer.toString(client.getId())));
                     }
                 }
             }
@@ -114,6 +115,13 @@ public class UnoServer implements Runnable{
     }
     public List<UnoClient> getUnoClients(){
         return unoClientManager.getClients();
+    }
+
+    private List<Integer> getClientIds() {
+        List<Integer> ids  = new ArrayList<>();
+        for (UnoClient c : getUnoClients()) {
+
+        }
     }
 
     public List<Player> getPlayerFromClients() {

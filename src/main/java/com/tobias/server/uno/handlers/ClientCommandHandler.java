@@ -22,6 +22,11 @@ public class ClientCommandHandler implements CommandHandler {
         }
     }
 
+    @Override
+    public void process(Command command) {
+
+    }
+
     private void handleClientDisconnect(String clientId) {
         clientManager.sendToAllClients(new Command(CommandType.CLIENT_DISCONNECT,clientId));
     }

@@ -12,11 +12,19 @@ public class GameManager {
 
     public Game newGame(List<Player> players) {
         Game game = new Game(games.size());
-        for (Player p : players) {
-            p.setInGame(true);
-        }
         game.setPlayers(players);
         this.games.add(game);
         return game;
+    }
+
+    public Game getGameByPlayer(Player p) {
+        for(Game game : games) {
+            for(Player player : game.getPlayers()) {
+                if (player == p) {
+                    return game;
+                }
+            }
+        }
+        return null;
     }
 }
