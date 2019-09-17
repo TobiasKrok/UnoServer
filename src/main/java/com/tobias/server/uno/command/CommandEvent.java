@@ -3,7 +3,7 @@ package com.tobias.server.uno.command;
 import com.tobias.server.uno.client.UnoClient;
 
 class CommandEvent {
-    private String command;
+    private Object command;
     private UnoClient unoClient;
 
     CommandEvent(String command, UnoClient unoClient) {
@@ -11,9 +11,19 @@ class CommandEvent {
         this.unoClient = unoClient;
     }
 
-    String getStringCommand() {
+    CommandEvent(Command command, UnoClient unoClient) {
+        this.command = command;
+        this.unoClient = unoClient;
+    }
+    CommandEvent(Command command) {
+        this.command = command;
+        this.unoClient = null;
+    }
+
+    Object getCommand() {
         return command;
     }
+
 
     UnoClient getUnoClient() {
         return unoClient;

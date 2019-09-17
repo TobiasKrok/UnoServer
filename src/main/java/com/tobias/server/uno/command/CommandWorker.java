@@ -20,13 +20,26 @@ public class CommandWorker implements Runnable{
         this.handlers = handlers;
     }
 
-    public  void process(String command, UnoClient unoClient) {
+    public void process(String command, UnoClient unoClient) {
         synchronized (queue) {
             queue.add(new CommandEvent(command, unoClient));
             queue.notify();
         }
     }
 
+    public void process(Command command, UnoClient unoClient) {
+        synchronized (queue) {
+            queue.add(new CommandEvent(command,unoClient));
+            queue.notify();
+        }
+    }
+
+    public void process(Command command) {
+        synchronized (queue) {
+            queue.add(new CommandEvent(command));
+            queue.notify();
+        }
+    }
     public void run(){
         while (true) {
             synchronized (queue) {
@@ -39,9 +52,16 @@ public class CommandWorker implements Runnable{
                     }
                 }
             }
-            Command c = parseCommand(queue.get(0).getStringCommand());
+            Command c;
+            if(queue.get(0).getCommand() instanceof String) {
+                c = parseCommand((String)queue.get(0).getCommand());
+            } else {
+                c = (Command) queue.get(0).getCommand();
+            }
+
             LOGGER.debug("Command received from Client " +  queue.get(0).getUnoClient().getId() + ": " + c.toString());
             if(!(c.getType() == CommandType.WORKER_UNKNOWNCOMMAND)) {
+                if(queue.get(0).getUnoClient() == null)
                 getHandlerForCommand(c).process(c,queue.get(0).getUnoClient());
             }
             queue.remove(0);

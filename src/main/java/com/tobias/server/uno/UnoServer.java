@@ -96,7 +96,7 @@ public class UnoServer implements Runnable{
 
     private void initializeGame(int gameId, List<Integer> ids) {
         for (UnoClient client : getUnoClients()) {
-            worker.(new Command(CommandType.GAME_START, Integer.toString(gameId)));
+            worker.process(new Command(CommandType.GAME_START, Integer.toString(gameId)));
             handlers.get("PLAYER").process(new Command(CommandType.GAME_REGISTEROPPONENTPLAYER, String.join(',')));
             handlers.get("PLAYER").process(new Command(CommandType.GAME_DRAWCARD, "7"), c);
         }
@@ -123,9 +123,7 @@ public class UnoServer implements Runnable{
     public List<UnoClient> getUnoClients(){
         return unoClientManager.getClients();
     }
-    private CommandHandler getHandlerAndProcess(Command c) {
 
-    }
     private List<Player> getPlayerFromClients() {
         List<Player> players = new ArrayList<>();
         for (UnoClient c : getUnoClients()){
