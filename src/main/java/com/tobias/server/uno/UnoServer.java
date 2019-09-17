@@ -30,6 +30,7 @@ public class UnoServer implements Runnable{
     private Map<String, CommandHandler> handlers;
     private UnoClientManager unoClientManager;
     private GameManager gameManager;
+    private CommandWorker worker;
     private static final Logger LOGGER = LogManager.getLogger(UnoServer.class.getName());
     private boolean running;
     private boolean accepting;
@@ -42,7 +43,11 @@ public class UnoServer implements Runnable{
         this.handlers = new HashMap<>();
         this.port = port;
         this.handlers.put("CLIENT",new ClientCommandHandler(unoClientManager));
-        handlers.put("PLAYER",new GameCommandHandler(gameManager,this.unoClientManager));
+        this.handlers.put("GAME",new GameCommandHandler(gameManager,this.unoClientManager));
+        this.worker = new CommandWorker(handlers);
+        Thread t = new Thread(worker);
+        t.setName("CommandWorker-UnoServer-" + t.getId());
+        t.start();
     }
 
     public void run(){
@@ -65,11 +70,12 @@ public class UnoServer implements Runnable{
                     for(Player p : getPlayerFromClients()) {
                         if(!p.isInGame()) {
                             players.add(p);
+                            playerIds.add(p.getId());
                         }
                     }
                     Game game = gameManager.newGame(players);
                     game.start();
-                    initializeGame(game.getGameId(),);
+                    initializeGame(game.getGameId(), playerIds);
                 }
             }
         } catch (IOException e) {
@@ -88,11 +94,12 @@ public class UnoServer implements Runnable{
 
     }
 
-    private void initializeGame(int gameId) {
-        for (UnoClient client : getUnoClients())
-        handlers.get("PLAYER").process(new Command(CommandType.PLAYER_GAMESTART,Integer.toString(gameId)));
-        handlers.get("PLAYER").process(new Command(CommandType.PLAYER_REGISTEROPPONENTPLAYER,String.join(',')));
-        handlers.get("PLAYER").process(new Command(CommandType.PLAYER_DRAWCARD,"7"), c);
+    private void initializeGame(int gameId, List<Integer> ids) {
+        for (UnoClient client : getUnoClients()) {
+            worker.(new Command(CommandType.GAME_START, Integer.toString(gameId)));
+            handlers.get("PLAYER").process(new Command(CommandType.GAME_REGISTEROPPONENTPLAYER, String.join(',')));
+            handlers.get("PLAYER").process(new Command(CommandType.GAME_DRAWCARD, "7"), c);
+        }
     }
     private void startPolling() {
         ScheduledExecutorService ses;
@@ -116,15 +123,10 @@ public class UnoServer implements Runnable{
     public List<UnoClient> getUnoClients(){
         return unoClientManager.getClients();
     }
+    private CommandHandler getHandlerAndProcess(Command c) {
 
-    private List<Integer> getClientIds() {
-        List<Integer> ids  = new ArrayList<>();
-        for (UnoClient c : getUnoClients()) {
-
-        }
     }
-
-    public List<Player> getPlayerFromClients() {
+    private List<Player> getPlayerFromClients() {
         List<Player> players = new ArrayList<>();
         for (UnoClient c : getUnoClients()){
             players.add(c.getPlayer());

@@ -44,7 +44,7 @@ public class UnoClient implements Runnable {
         while (!disconnected) {
             try {
                 if (input.ready()) {
-                    worker.processCommand(read(), this);
+                    worker.process(read(), this);
                 } else
                     try {
                         Thread.sleep(1000);

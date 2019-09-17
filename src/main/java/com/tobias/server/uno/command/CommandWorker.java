@@ -20,13 +20,12 @@ public class CommandWorker implements Runnable{
         this.handlers = handlers;
     }
 
-    public  void processCommand(String command, UnoClient unoClient) {
+    public  void process(String command, UnoClient unoClient) {
         synchronized (queue) {
             queue.add(new CommandEvent(command, unoClient));
             queue.notify();
         }
     }
-
 
     public void run(){
         while (true) {

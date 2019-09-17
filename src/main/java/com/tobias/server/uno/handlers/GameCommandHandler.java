@@ -18,15 +18,15 @@ public class GameCommandHandler implements CommandHandler {
 
     @Override
     public void process(Command command, UnoClient unoClient) {
-        if(command.getType() == CommandType.PLAYER_DRAWCARD) {
-            unoClientManager.sendToClient(unoClient,new Command(CommandType.PLAYER_DRAWCARD,gameManager.draw(unoClient.getPlayer(),Integer.parseInt(command.getData()))));
+        if(command.getType() == CommandType.GAME_DRAWCARD) {
+            unoClientManager.sendToClient(unoClient,new Command(CommandType.GAME_DRAWCARD,gameManager.draw(unoClient.getPlayer(),Integer.parseInt(command.getData()))));
         }
     }
     @Override
     public void process(Command command) {
-        if(command.getType() == CommandType.PLAYER_GAMESTART) {
+        if(command.getType() == CommandType.GAME_START) {
             // Pass game ID to client
-            unoClientManager.sendToAllClients(new Command(CommandType.PLAYER_GAMESTART,command.getData()));
+            unoClientManager.sendToAllClients(new Command(CommandType.GAME_START,command.getData()));
         }
     }
 
