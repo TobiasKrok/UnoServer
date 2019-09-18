@@ -90,15 +90,15 @@ public class UnoServer implements Runnable{
         clientThread.setName("UnoClient-" + unoClient.getId());
         clientThread.start();
         unoClientManager.addClient(unoClient);
-        handlers.get("CLIENT").process(new Command(CommandType.CLIENT_REGISTERID,Integer.toString(unoClient.getId())),unoClient);
+        worker.process(new Command(CommandType.CLIENT_REGISTERID,Integer.toString(unoClient.getId())),unoClient);
 
     }
 
     private void initializeGame(int gameId, List<Integer> ids) {
         for (UnoClient client : getUnoClients()) {
             worker.process(new Command(CommandType.GAME_START, Integer.toString(gameId)));
-            handlers.get("PLAYER").process(new Command(CommandType.GAME_REGISTEROPPONENTPLAYER, String.join(',')));
-            handlers.get("PLAYER").process(new Command(CommandType.GAME_DRAWCARD, "7"), c);
+            worker.process(new Command(CommandType.GAME_REGISTEROPPONENTPLAYER,ids.toString()));
+            worker.process(new Command(CommandType.GAME_DRAWCARD, "7"));
         }
     }
     private void startPolling() {
@@ -111,7 +111,7 @@ public class UnoServer implements Runnable{
                 if(clients.size() > 0) {
                     for (UnoClient client : clients) {
                         // handlers.get("PLAYER").process(new Command(CommandType.PLAYER_DISCONNECT,Integer.toString(client.getId())),client);
-                        handlers.get("CLIENT").process(new Command(CommandType.CLIENT_DISCONNECT,Integer.toString(client.getId())));
+                       worker.process(new Command(CommandType.CLIENT_DISCONNECT,Integer.toString(client.getId())));
                     }
                 }
             }
@@ -120,6 +120,7 @@ public class UnoServer implements Runnable{
     public void setAccepting(boolean val) {
         this.accepting = val;
     }
+
     public List<UnoClient> getUnoClients(){
         return unoClientManager.getClients();
     }

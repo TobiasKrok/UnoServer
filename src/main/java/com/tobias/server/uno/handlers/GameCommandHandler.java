@@ -27,6 +27,8 @@ public class GameCommandHandler implements CommandHandler {
         if(command.getType() == CommandType.GAME_START) {
             // Pass game ID to client
             unoClientManager.sendToAllClients(new Command(CommandType.GAME_START,command.getData()));
+        } else if(command.getType() == CommandType.GAME_DRAWCARD) {
+            unoClientManager.sendToAllClients(new Command(CommandType.GAME_DRAWCARD,gameManager.));
         }
     }
 
