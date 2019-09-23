@@ -11,9 +11,9 @@ import java.util.Map;
 
 public class CommandWorker implements Runnable {
 
+    private static final Logger LOGGER = LogManager.getLogger(CommandWorker.class.getName());
     private List<Object> queue;
     private Map<String, CommandHandler> handlers;
-    private static final Logger LOGGER = LogManager.getLogger(CommandWorker.class.getName());
 
     public CommandWorker(Map<String, CommandHandler> handlers) {
         this.queue = new LinkedList<>();
@@ -58,15 +58,24 @@ public class CommandWorker implements Runnable {
                 CommandEvent event = (CommandEvent) queue.get(0);
                 LOGGER.debug("Command received from Client " + event.getUnoClient().getId() + ": " + event.getCommand().toString());
                 if (!(event.getCommand().getType() == CommandType.WORKER_UNKNOWNCOMMAND)) {
-                    getHandlerForCommand(event.getCommand()).process(event.getCommand(), event.getUnoClient());
+                    try {
+                        getHandlerForCommand(event.getCommand()).process(event.getCommand(), event.getUnoClient());
+                    } catch (NullPointerException e) {
+                        LOGGER.error("No handler could process this command: " + queue.get(0).toString(), e);
+                    }
+
                 }
             } else if (queue.get(0) instanceof Command) {
-                LOGGER.debug("Command received from Server :" + queue.get(0).toString());
+                LOGGER.debug("Command received from Server : " + queue.get(0).toString());
                 if (!(((Command) queue.get(0)).getType() == CommandType.WORKER_UNKNOWNCOMMAND)) {
-                    getHandlerForCommand((Command) queue.get(0)).process((Command) queue.get(0));
+                    try {
+                        getHandlerForCommand((Command) queue.get(0)).process((Command) queue.get(0));
+                    } catch (NullPointerException e) {
+                        LOGGER.error("No handler could process this command: " + queue.get(0).toString(), e);
+                    }
                 }
             } else {
-                LOGGER.error("Could not resolve object in queue!"  + queue.get(0).toString());
+                LOGGER.error("Could not resolve object in queue!" + queue.get(0).toString());
             }
             queue.remove(0);
         }

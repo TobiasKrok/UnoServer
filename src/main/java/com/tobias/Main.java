@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
 
         UnoServer unoServer = new UnoServer(Integer.parseInt(args[0]));
-        UnoServer.maxPlayers = Integer.parseInt(args[1]);
+        UnoServer.minPlayers = Integer.parseInt(args[1]);
         new Thread(unoServer).start();
 
 /*            Game game = new Game();

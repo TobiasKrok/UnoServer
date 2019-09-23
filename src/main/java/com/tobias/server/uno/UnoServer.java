@@ -2,7 +2,6 @@ package com.tobias.server.uno;
 
 
 import com.tobias.game.Game;
-import com.tobias.game.GameManager;
 import com.tobias.game.Player;
 import com.tobias.server.uno.client.UnoClient;
 import com.tobias.server.uno.client.UnoClientManager;
@@ -24,26 +23,25 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class UnoServer implements Runnable{
 
     private Map<String, CommandHandler> handlers;
     private UnoClientManager unoClientManager;
-    private GameManager gameManager;
+    private Game game;
     private CommandWorker worker;
     private static final Logger LOGGER = LogManager.getLogger(UnoServer.class.getName());
     private boolean running;
     private boolean accepting;
     private int port;
-    public static int maxPlayers;
+    public static int minPlayers;
 
     public UnoServer (int port){
         this.unoClientManager = new UnoClientManager();
-        this.gameManager = new GameManager();
         this.handlers = new HashMap<>();
         this.port = port;
         this.handlers.put("CLIENT",new ClientCommandHandler(unoClientManager));
-        this.handlers.put("GAME",new GameCommandHandler(gameManager,this.unoClientManager));
         this.worker = new CommandWorker(handlers);
         Thread t = new Thread(worker);
         t.setName("CommandWorker-UnoServer-" + t.getId());
@@ -56,26 +54,25 @@ public class UnoServer implements Runnable{
         this.accepting = true;
         try(ServerSocket socket = new ServerSocket(this.port)){
             startPolling();
-            LOGGER.info("Server started on port " + this.port + " with max players allowed: " + maxPlayers);
+            LOGGER.info("Server started on port " + this.port + " with max players allowed: " + minPlayers);
             while (running){
                 if(accepting) {
                     UnoClient unoClient = new UnoClient(socket.accept(), getUnoClients().size(),new CommandWorker(handlers));
                     LOGGER.info("Client connected: " + unoClient.getIpAddress());
                     initiateClient(unoClient);
                 }
-                if(getUnoClients().size() == maxPlayers) {
+                if(getUnoClients().size() == minPlayers) {
                     accepting = false;
-                    List<Player> players = new ArrayList<>();
-                    List<Integer> playerIds = new ArrayList<>();
-                    for(Player p : getPlayerFromClients()) {
-                        if(!p.isInGame()) {
-                            players.add(p);
-                            playerIds.add(p.getId());
-                        }
+                    if(game == null || !game.isInProgress()) {
+                        this.game = new Game(getPlayerFromClients());
+                        handlers.put("GAME",new GameCommandHandler(game.getGameManager(),this.unoClientManager));
+                        initializeGame(getPlayerIds());
+                        this.game.start();
                     }
-                    Game game = gameManager.newGame(players);
-                    game.start();
-                    initializeGame(game.getGameId(), playerIds);
+                } else {
+                    // If minPlayers have been hit but a client disconnected, we have to set
+                    // accepting to true so a new player can join.
+                    accepting = true;
                 }
             }
         } catch (IOException e) {
@@ -94,12 +91,10 @@ public class UnoServer implements Runnable{
 
     }
 
-    private void initializeGame(int gameId, List<Integer> ids) {
-        for (UnoClient client : getUnoClients()) {
-            worker.process(new Command(CommandType.GAME_START, Integer.toString(gameId)));
-            worker.process(new Command(CommandType.GAME_REGISTEROPPONENTPLAYER,ids.toString()));
+    private void initializeGame(List<Integer> playerIds) {
+            worker.process(new Command(CommandType.GAME_START));
+            worker.process(new Command(CommandType.GAME_REGISTEROPPONENTPLAYER, playerIds.stream().map(String::valueOf).collect(Collectors.joining(","))));
             worker.process(new Command(CommandType.GAME_DRAWCARD, "7"));
-        }
     }
     private void startPolling() {
         ScheduledExecutorService ses;
@@ -131,5 +126,13 @@ public class UnoServer implements Runnable{
             players.add(c.getPlayer());
         }
         return players;
+    }
+
+    private List<Integer> getPlayerIds() {
+        List<Integer> ids = new ArrayList<>();
+        for (Player p : getPlayerFromClients()) {
+            ids.add(p.getId());
+        }
+        return ids;
     }
 }

@@ -1,30 +1,29 @@
 package com.tobias.game;
 
-import java.util.ArrayList;
+import com.tobias.game.card.Card;
+import com.tobias.game.card.Table;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GameManager {
-    private List<Game> games;
+    private Table table;
+    private List<Player> players;
 
-    public GameManager() {
-        this.games = new ArrayList<>();
+    public GameManager(Table table, List<Player> players) {
+        this.table = table;
+        this.players = players;
     }
 
-    public Game newGame(List<Player> players) {
-        Game game = new Game(games.size());
-        game.setPlayers(players);
-        this.games.add(game);
-        return game;
+    public String draw(Player player, int n) {
+        List<Card> cards = table.deal(player,n);
+        return cards.stream()
+                .map(Card::toString)
+                .collect(Collectors.joining(","));
     }
 
-    public Game getGameByPlayer(Player p) {
-        for(Game game : games) {
-            for(Player player : game.getPlayers()) {
-                if (player == p) {
-                    return game;
-                }
-            }
-        }
-        return null;
+    public List<Player> getPlayers() {
+        return players;
     }
+
 }
