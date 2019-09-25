@@ -1,22 +1,19 @@
 package com.tobias.server.uno;
 
 
-import com.tobias.game.Game;
-import com.tobias.game.Player;
 import com.tobias.server.uno.client.UnoClient;
 import com.tobias.server.uno.client.UnoClientManager;
 import com.tobias.server.uno.command.Command;
 import com.tobias.server.uno.command.CommandType;
 import com.tobias.server.uno.command.CommandWorker;
+import com.tobias.server.uno.handlers.AbstractCommandHandler;
 import com.tobias.server.uno.handlers.ClientCommandHandler;
-import com.tobias.server.uno.handlers.CommandHandler;
 import com.tobias.server.uno.handlers.GameCommandHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +24,8 @@ import java.util.stream.Collectors;
 
 public class UnoServer implements Runnable{
 
-    private Map<String, CommandHandler> handlers;
+    private Map<String, AbstractCommandHandler> handlers;
     private UnoClientManager unoClientManager;
-    private Game game;
     private CommandWorker worker;
     private static final Logger LOGGER = LogManager.getLogger(UnoServer.class.getName());
     private boolean running;
@@ -41,7 +37,8 @@ public class UnoServer implements Runnable{
         this.unoClientManager = new UnoClientManager();
         this.handlers = new HashMap<>();
         this.port = port;
-        this.handlers.put("CLIENT",new ClientCommandHandler(unoClientManager));
+        this.handlers.put("CLIENT",new ClientCommandHandler(this.unoClientManager));
+        this.handlers.put("GAME",new GameCommandHandler(this.unoClientManager));
         this.worker = new CommandWorker(handlers);
         Thread t = new Thread(worker);
         t.setName("CommandWorker-UnoServer-" + t.getId());
@@ -57,20 +54,18 @@ public class UnoServer implements Runnable{
             LOGGER.info("Server started on port " + this.port + " with max players allowed: " + minPlayers);
             while (running){
                 if(accepting) {
-                    UnoClient unoClient = new UnoClient(socket.accept(), getUnoClients().size(),new CommandWorker(handlers));
+                    UnoClient unoClient = new UnoClient(socket.accept(), unoClientManager.getClients().size(),new CommandWorker(handlers));
                     LOGGER.info("Client connected: " + unoClient.getIpAddress());
                     initiateClient(unoClient);
                 }
-                if(getUnoClients().size() == minPlayers) {
+                if(unoClientManager.getClients().size() == minPlayers) {
                     accepting = false;
-                    if(game == null || !game.isInProgress()) {
-                        this.game = new Game(getPlayerFromClients());
-                        handlers.put("GAME",new GameCommandHandler(game.getGameManager(),this.unoClientManager));
-                        initializeGame(getPlayerIds());
-                        this.game.start();
+                    if(!unoClientManager.clientsAreInGame()) {
+                        worker.process(new Command(CommandType.GAME_START, ""));
+                        initializeGame(unoClientManager.getPlayerIds());
                     }
                 } else {
-                    // If minPlayers have been hit but a client disconnected, we have to set
+                    // If minPlayers has been hit but a client disconnected, we have to set
                     // accepting to true so a new player can join.
                     accepting = true;
                 }
@@ -82,6 +77,7 @@ public class UnoServer implements Runnable{
     public boolean isRunning(){
         return this.running;
     }
+
     private void initiateClient(UnoClient unoClient) {
         Thread clientThread = new Thread(unoClient);
         clientThread.setName("UnoClient-" + unoClient.getId());
@@ -116,23 +112,6 @@ public class UnoServer implements Runnable{
         this.accepting = val;
     }
 
-    public List<UnoClient> getUnoClients(){
-        return unoClientManager.getClients();
-    }
 
-    private List<Player> getPlayerFromClients() {
-        List<Player> players = new ArrayList<>();
-        for (UnoClient c : getUnoClients()){
-            players.add(c.getPlayer());
-        }
-        return players;
-    }
 
-    private List<Integer> getPlayerIds() {
-        List<Integer> ids = new ArrayList<>();
-        for (Player p : getPlayerFromClients()) {
-            ids.add(p.getId());
-        }
-        return ids;
-    }
 }

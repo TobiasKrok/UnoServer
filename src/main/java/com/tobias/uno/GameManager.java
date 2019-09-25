@@ -1,17 +1,17 @@
-package com.tobias.game;
+package com.tobias.uno;
 
-import com.tobias.game.card.Card;
-import com.tobias.game.card.Table;
+import com.tobias.uno.card.Card;
+import com.tobias.uno.card.Table;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class GameManager {
+    private Game game;
     private Table table;
     private List<Player> players;
 
-    public GameManager(Table table, List<Player> players) {
-        this.table = table;
+    public GameManager(List<Player> players) {
         this.players = players;
     }
 
@@ -26,4 +26,9 @@ public class GameManager {
         return players;
     }
 
+    public void createNewGame() {
+        this.game = new Game(players);
+        this.table = game.getTable();
+        game.start();
+    }
 }

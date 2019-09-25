@@ -1,4 +1,4 @@
-package com.tobias.game.card;
+package com.tobias.uno.card;
 
 public class Card {
     private CardType cardType;

@@ -5,7 +5,7 @@ import com.tobias.server.uno.client.UnoClientManager;
 import com.tobias.server.uno.command.Command;
 import com.tobias.server.uno.command.CommandType;
 
-public class ClientCommandHandler implements CommandHandler {
+public class ClientCommandHandler extends AbstractCommandHandler {
 
     private UnoClientManager clientManager;
 

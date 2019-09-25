@@ -1,6 +1,6 @@
-package com.tobias.game;
+package com.tobias.uno;
 
-import com.tobias.game.card.Card;
+import com.tobias.uno.card.Card;
 
 import java.util.ArrayList;
 import java.util.List;

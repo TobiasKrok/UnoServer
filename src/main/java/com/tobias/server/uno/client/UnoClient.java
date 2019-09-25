@@ -1,6 +1,6 @@
 package com.tobias.server.uno.client;
 
-import com.tobias.game.Player;
+import com.tobias.uno.Player;
 import com.tobias.server.uno.command.CommandWorker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

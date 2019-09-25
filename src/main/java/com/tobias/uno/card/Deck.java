@@ -1,4 +1,4 @@
-package com.tobias.game.card;
+package com.tobias.uno.card;
 
 
 import java.util.ArrayList;

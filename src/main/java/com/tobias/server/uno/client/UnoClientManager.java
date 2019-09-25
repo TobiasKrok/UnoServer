@@ -1,5 +1,6 @@
 package com.tobias.server.uno.client;
 
+import com.tobias.uno.Player;
 import com.tobias.server.uno.command.Command;
 import com.tobias.server.uno.command.CommandType;
 import org.apache.logging.log4j.LogManager;
@@ -64,5 +65,29 @@ public class UnoClientManager {
         for(UnoClient unoClient : unoClients){
            sendToClient(unoClient,command);
         }
+    }
+
+    public List<Integer> getPlayerIds() {
+        List<Integer> ids = new ArrayList<>();
+        for (Player p : getPlayerFromClients()) {
+            ids.add(p.getId());
+        }
+        return ids;
+    }
+    public List<Player> getPlayerFromClients() {
+        List<Player> players = new ArrayList<>();
+        for (UnoClient c : unoClients){
+            players.add(c.getPlayer());
+        }
+        return players;
+    }
+
+    public boolean clientsAreInGame() {
+        for (Player p : getPlayerFromClients()) {
+            if(p.isInGame()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

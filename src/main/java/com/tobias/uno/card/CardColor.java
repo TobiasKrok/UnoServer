@@ -1,4 +1,4 @@
-package com.tobias.game.card;
+package com.tobias.uno.card;
 
 public enum CardColor {
     BLUE, RED, YELLOW, GREEN, SPECIAL, NONE

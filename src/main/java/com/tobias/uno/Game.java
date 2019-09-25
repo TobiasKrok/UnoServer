@@ -1,6 +1,6 @@
-package com.tobias.game;
+package com.tobias.uno;
 
-import com.tobias.game.card.Table;
+import com.tobias.uno.card.Table;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,7 +8,6 @@ import java.util.List;
 
 public class Game {
     private List<Player> players;
-    private GameManager gameManager;
     private Table table;
     private boolean inProgress;
     private static final Logger LOGGER = LogManager.getLogger(Game.class.getName());
@@ -16,7 +15,6 @@ public class Game {
     public Game(List<Player> players) {
         this.table = new Table();
         this.players = players;
-        this.gameManager = new GameManager(this.table,this.players);
     }
 
 
@@ -26,14 +24,13 @@ public class Game {
     }
     public void start() {
         this.inProgress = true;
+        for (Player p : players) {
+            p.setInGame(true);
+        }
         LOGGER.info("Game started with " + players.size() + " players!");
     }
 
-    public GameManager getGameManager() {
-        return gameManager;
-    }
-
-    protected Table getTable() {
+    Table getTable() {
         return this.table;
     }
 

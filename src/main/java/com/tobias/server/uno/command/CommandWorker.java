@@ -1,7 +1,7 @@
 package com.tobias.server.uno.command;
 
 import com.tobias.server.uno.client.UnoClient;
-import com.tobias.server.uno.handlers.CommandHandler;
+import com.tobias.server.uno.handlers.AbstractCommandHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,9 +13,9 @@ public class CommandWorker implements Runnable {
 
     private static final Logger LOGGER = LogManager.getLogger(CommandWorker.class.getName());
     private List<Object> queue;
-    private Map<String, CommandHandler> handlers;
+    private Map<String, AbstractCommandHandler> handlers;
 
-    public CommandWorker(Map<String, CommandHandler> handlers) {
+    public CommandWorker(Map<String, AbstractCommandHandler> handlers) {
         this.queue = new LinkedList<>();
         this.handlers = handlers;
     }
@@ -95,7 +95,7 @@ public class CommandWorker implements Runnable {
         return new Command(cmdType, data);
     }
 
-    private CommandHandler getHandlerForCommand(Command command) {
+    private AbstractCommandHandler getHandlerForCommand(Command command) {
         String prefix = command.getType().name().substring(0, command.getType().name().indexOf("_"));
         return handlers.get(prefix);
     }
