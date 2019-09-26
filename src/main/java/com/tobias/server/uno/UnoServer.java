@@ -22,45 +22,45 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class UnoServer implements Runnable{
+public class UnoServer implements Runnable {
 
+    private static final Logger LOGGER = LogManager.getLogger(UnoServer.class.getName());
+    public static int minPlayers;
     private Map<String, AbstractCommandHandler> handlers;
     private UnoClientManager unoClientManager;
     private CommandWorker worker;
-    private static final Logger LOGGER = LogManager.getLogger(UnoServer.class.getName());
     private boolean running;
     private boolean accepting;
     private int port;
-    public static int minPlayers;
 
-    public UnoServer (int port){
+    public UnoServer(int port) {
         this.unoClientManager = new UnoClientManager();
         this.handlers = new HashMap<>();
         this.port = port;
-        this.handlers.put("CLIENT",new ClientCommandHandler(this.unoClientManager));
-        this.handlers.put("GAME",new GameCommandHandler(this.unoClientManager));
+        this.handlers.put("CLIENT", new ClientCommandHandler(this.unoClientManager));
+        this.handlers.put("GAME", new GameCommandHandler(this.unoClientManager));
         this.worker = new CommandWorker(handlers);
         Thread t = new Thread(worker);
         t.setName("CommandWorker-UnoServer-" + t.getId());
         t.start();
     }
 
-    public void run(){
+    public void run() {
         Thread.currentThread().setName("UnoServer-" + Thread.currentThread().getId());
         this.running = true;
         this.accepting = true;
-        try(ServerSocket socket = new ServerSocket(this.port)){
+        try (ServerSocket socket = new ServerSocket(this.port)) {
             startPolling();
             LOGGER.info("Server started on port " + this.port + " with max players allowed: " + minPlayers);
-            while (running){
-                if(accepting) {
-                    UnoClient unoClient = new UnoClient(socket.accept(), unoClientManager.getClients().size(),new CommandWorker(handlers));
+            while (running) {
+                if (accepting) {
+                    UnoClient unoClient = new UnoClient(socket.accept(), unoClientManager.getClients().size(), new CommandWorker(handlers));
                     LOGGER.info("Client connected: " + unoClient.getIpAddress());
                     initiateClient(unoClient);
                 }
-                if(unoClientManager.getClients().size() == minPlayers) {
+                if (unoClientManager.getClients().size() == minPlayers) {
                     accepting = false;
-                    if(!unoClientManager.clientsAreInGame()) {
+                    if (!unoClientManager.clientsAreInGame()) {
                         worker.process(new Command(CommandType.GAME_START, ""));
                         initializeGame(unoClientManager.getPlayerIds());
                     }
@@ -71,10 +71,11 @@ public class UnoServer implements Runnable{
                 }
             }
         } catch (IOException e) {
-            LOGGER.fatal("Server IO exception",e);
+            LOGGER.fatal("Server IO exception", e);
         }
     }
-    public boolean isRunning(){
+
+    public boolean isRunning() {
         return this.running;
     }
 
@@ -83,15 +84,15 @@ public class UnoServer implements Runnable{
         clientThread.setName("UnoClient-" + unoClient.getId());
         clientThread.start();
         unoClientManager.addClient(unoClient);
-        worker.process(new Command(CommandType.CLIENT_REGISTERID,Integer.toString(unoClient.getId())),unoClient);
-
+        worker.process(new Command(CommandType.CLIENT_REGISTERID, Integer.toString(unoClient.getId())), unoClient);
     }
 
     private void initializeGame(List<Integer> playerIds) {
-            worker.process(new Command(CommandType.GAME_START));
-            worker.process(new Command(CommandType.GAME_REGISTEROPPONENTPLAYER, playerIds.stream().map(String::valueOf).collect(Collectors.joining(","))));
-            worker.process(new Command(CommandType.GAME_DRAWCARD, "7"));
+        worker.process(new Command(CommandType.GAME_START));
+        worker.process(new Command(CommandType.GAME_REGISTEROPPONENTPLAYER, playerIds.stream().map(String::valueOf).collect(Collectors.joining(","))));
+        worker.process(new Command(CommandType.GAME_DRAWCARD, "7"));
     }
+
     private void startPolling() {
         ScheduledExecutorService ses;
         ses = Executors.newSingleThreadScheduledExecutor();
@@ -99,19 +100,19 @@ public class UnoServer implements Runnable{
             @Override
             public void run() {
                 List<UnoClient> clients = unoClientManager.checkForDisconnect();
-                if(clients.size() > 0) {
+                if (clients.size() > 0) {
                     for (UnoClient client : clients) {
                         // handlers.get("PLAYER").process(new Command(CommandType.PLAYER_DISCONNECT,Integer.toString(client.getId())),client);
-                       worker.process(new Command(CommandType.CLIENT_DISCONNECT,Integer.toString(client.getId())));
+                        worker.process(new Command(CommandType.CLIENT_DISCONNECT, Integer.toString(client.getId())));
                     }
                 }
             }
-        },0,8, TimeUnit.SECONDS);
+        }, 0, 8, TimeUnit.SECONDS);
     }
+
     public void setAccepting(boolean val) {
         this.accepting = val;
     }
-
 
 
 }
