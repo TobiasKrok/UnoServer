@@ -17,8 +17,8 @@ public class GameCommandHandler extends AbstractCommandHandler {
 
     @Override
     public void process(Command command, UnoClient unoClient) {
-        if(command.getType() == CommandType.GAME_DRAWCARD) {
-            unoClientManager.sendToClient(unoClient,new Command(CommandType.GAME_DRAWCARD,gameManager.draw(unoClient.getPlayer(),Integer.parseInt(command.getData()))));
+        if(command.getType() == CommandType.GAME_REQUESTCARD) {
+            unoClientManager.sendToClient(unoClient,new Command(CommandType.GAME_SETCARD,gameManager.draw(unoClient.getPlayer(),Integer.parseInt(command.getData()))));
         }
     }
     @Override
@@ -26,10 +26,10 @@ public class GameCommandHandler extends AbstractCommandHandler {
         if(command.getType() == CommandType.GAME_START) {
             this.gameManager = new GameManager(unoClientManager.getPlayerFromClients());
             gameManager.createNewGame();
-            unoClientManager.sendToAllClients(new Command(CommandType.GAME_START));
-        } else if(command.getType() == CommandType.GAME_DRAWCARD) {
+            unoClientManager.sendToAllClients(new Command(CommandType.GAME_START,command.getData()));
+        } else if(command.getType() == CommandType.GAME_REQUESTCARD) {
             for (UnoClient c : unoClientManager.getClients()) {
-                unoClientManager.sendToClient(c,new Command(CommandType.GAME_DRAWCARD, gameManager.draw(c.getPlayer(),Integer.parseInt(command.getData()))));
+                unoClientManager.sendToClient(c,new Command(CommandType.GAME_SETCARD, gameManager.draw(c.getPlayer(),Integer.parseInt(command.getData()))));
             }
         } else if(command.getType() == CommandType.GAME_REGISTEROPPONENTPLAYER) {
             unoClientManager.sendToAllClients(new Command(CommandType.GAME_REGISTEROPPONENTPLAYER,command.getData()));

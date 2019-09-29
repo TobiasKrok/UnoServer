@@ -1,18 +1,21 @@
 package com.tobias.server.uno.command;
 
 public enum CommandType {
-    GAME_DRAWCARD,
+    GAME_SETCARD,
+    GAME_REQUESTCARD,
     GAME_LAYCARD,
     GAME_UNO,
     GAME_DISCONNECT,
     GAME_START,
     GAME_REGISTEROPPONENTPLAYER,
 
+
     CLIENT_CONNECT,
     CLIENT_POLL,
     CLIENT_READY,
     CLIENT_REGISTERID,
     CLIENT_DISCONNECT,
+
 
     WORKER_UNKNOWNCOMMAND
 }

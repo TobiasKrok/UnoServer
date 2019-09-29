@@ -61,7 +61,6 @@ public class UnoServer implements Runnable {
                 if (unoClientManager.getClients().size() == minPlayers) {
                     accepting = false;
                     if (!unoClientManager.clientsAreInGame()) {
-                        worker.process(new Command(CommandType.GAME_START, ""));
                         initializeGame(unoClientManager.getPlayerIds());
                     }
                 } else {
@@ -88,9 +87,9 @@ public class UnoServer implements Runnable {
     }
 
     private void initializeGame(List<Integer> playerIds) {
-        worker.process(new Command(CommandType.GAME_START));
-        worker.process(new Command(CommandType.GAME_REGISTEROPPONENTPLAYER, playerIds.stream().map(String::valueOf).collect(Collectors.joining(","))));
-        worker.process(new Command(CommandType.GAME_DRAWCARD, "7"));
+        worker.process(new Command(CommandType.GAME_START,playerIds.stream().map(String::valueOf).collect(Collectors.joining(","))));
+      //  worker.process(new Command(CommandType.GAME_REGISTEROPPONENTPLAYER, ));
+        worker.process(new Command(CommandType.GAME_SETCARD, "7"));
     }
 
     private void startPolling() {
