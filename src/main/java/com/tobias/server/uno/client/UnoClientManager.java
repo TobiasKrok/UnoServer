@@ -27,13 +27,6 @@ public class UnoClientManager {
         }
     }
 
-    public void removeClient(UnoClient client) {
-        unoClients.remove(client);
-    }
-    public int getNumberOfClients(){
-        return unoClients.size();
-    }
-
     public void sendToClient(UnoClient unoClient, Command command) {
         try {
             unoClient.write(command.toString());
@@ -90,4 +83,6 @@ public class UnoClientManager {
         }
         return false;
     }
+
+    public boolean setPlayersInGame
 }

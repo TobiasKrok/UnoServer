@@ -87,6 +87,7 @@ public class UnoServer implements Runnable {
     }
 
     private void initializeGame(List<Integer> playerIds) {
+        unoClientManager
         worker.process(new Command(CommandType.GAME_START,playerIds.stream().map(String::valueOf).collect(Collectors.joining(","))));
       //  worker.process(new Command(CommandType.GAME_REGISTEROPPONENTPLAYER, ));
         worker.process(new Command(CommandType.GAME_SETCARD, "7"));
