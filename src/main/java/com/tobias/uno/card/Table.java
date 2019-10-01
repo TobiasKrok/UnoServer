@@ -3,6 +3,7 @@ package com.tobias.uno.card;
 import com.tobias.uno.Player;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Table {
@@ -38,6 +39,17 @@ public class Table {
         List<Card> cards = deck.draw(n);
         p.addToHand(cards);
         return cards;
+    }
+
+   public void restockDeck() {
+        Iterator iter = cardsOnTable.iterator();
+        while (iter.hasNext()) {
+            Card c = (Card) iter.next();
+            if(c != getCurrentCard()) {
+                deck.add(c);
+                iter.remove();
+            }
+        }
     }
 
 }

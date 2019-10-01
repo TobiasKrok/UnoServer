@@ -30,7 +30,8 @@ public class GameManager {
     }
 
     public void restockDeckAndShuffle() {
-        
+        table.restockDeck();
+        table.getDeck().shuffle();
     }
 
     public void createNewGame() {

@@ -27,6 +27,7 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 if(gameManager.canDraw(Integer.parseInt(command.getData()))) {
                     unoClientManager.sendToClient(unoClient, new Command(CommandType.GAME_SETCARD, gameManager.draw(unoClient.getPlayer(), Integer.parseInt(command.getData()))));
                 } else {
+                    gameManager.restockDeckAndShuffle();
 
                 }
                 break;
@@ -55,4 +56,11 @@ public class GameCommandHandler extends AbstractCommandHandler {
         }
     }
 
+    private void updateGameInfo() {
+        // Update deck count
+        // Update opponent player hand count
+        // Update cards on table
+        // Update currentCard
+        //
+    }
 }
