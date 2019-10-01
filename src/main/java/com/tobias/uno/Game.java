@@ -16,9 +16,6 @@ public class Game {
         this.table = new Table();
         this.players = players;
     }
-
-
-
     public boolean isInProgress() {
         return this.inProgress;
     }

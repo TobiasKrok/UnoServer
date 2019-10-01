@@ -24,23 +24,20 @@ public class Table {
 
     public void addCardToTable(Card c){
         cardsOnTable.add(c);
-        // Resets color
-        // GameController.setLegalCardColor(0);
     }
+
+    public Deck getDeck() {
+        return deck;
+    }
+
     public void addCardToTable(List<Card> cards){
         cardsOnTable.addAll(cards);
     }
 
     public List<Card> deal(Player p, int n){
-        if(deck.getDeckCount() >= n) {
-            List<Card> cards = deck.draw(n);
-            p.addToHand(cards);
-            // Return cards so we can inform client
-            return cards;
-        } else {
-            //TODO shuffle cards on table and put back in deck
-        }
-        return null;
+        List<Card> cards = deck.draw(n);
+        p.addToHand(cards);
+        return cards;
     }
 
 }

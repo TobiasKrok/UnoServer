@@ -22,7 +22,13 @@ public class GameCommandHandler extends AbstractCommandHandler {
     public void process(Command command, UnoClient unoClient) {
         switch (command.getType()) {
             case GAME_REQUESTCARD:
-                unoClientManager.sendToClient(unoClient, new Command(CommandType.GAME_SETCARD, gameManager.draw(unoClient.getPlayer(), Integer.parseInt(command.getData()))));
+                // If deck.size < ToInt(command.getData) reshuffle deck and notify client
+                // Then send requested card
+                if(gameManager.canDraw(Integer.parseInt(command.getData()))) {
+                    unoClientManager.sendToClient(unoClient, new Command(CommandType.GAME_SETCARD, gameManager.draw(unoClient.getPlayer(), Integer.parseInt(command.getData()))));
+                } else {
+
+                }
                 break;
             default:
                 LOGGER.error("Could not process command: " + command.toString() + " which should be sent to client: " + unoClient.getId());
@@ -38,7 +44,7 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 gameManager.createNewGame();
                 unoClientManager.sendToAllClients(new Command(CommandType.GAME_START, command.getData()));
                 break;
-            case GAME_REQUESTCARD:
+            case GAME_SETCARD:
                 for (UnoClient c : unoClientManager.getClients()) {
                     unoClientManager.sendToClient(c, new Command(CommandType.GAME_SETCARD, gameManager.draw(c.getPlayer(), Integer.parseInt(command.getData()))));
                 }

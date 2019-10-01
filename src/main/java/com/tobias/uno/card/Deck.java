@@ -8,10 +8,12 @@ import java.util.List;
 public class Deck {
 
     private List<Card> deck;
+    private List<Card> drawnCards;
 
 
     public Deck() {
         this.deck = new ArrayList<>();
+        this.drawnCards = new ArrayList<>();
         createDeck();
         shuffle();
     }
@@ -62,11 +64,15 @@ public class Deck {
         }
     }
 
-    public List<Card> draw(int n) {
+    List<Card> getDrawnCards() {
+        return this.drawnCards;
+    }
+    List<Card> draw(int n) {
         List<Card> cards = new ArrayList<>();
         if (n < deck.size() && n > 0) {
             for (int i = 0; i < n; i++) {
                 cards.add(deck.get(i));
+                drawnCards.add(deck.get(i));
                 deck.remove(i);
             }
         }

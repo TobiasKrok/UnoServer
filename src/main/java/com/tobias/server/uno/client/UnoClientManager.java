@@ -83,6 +83,4 @@ public class UnoClientManager {
         }
         return false;
     }
-
-    public boolean setPlayersInGame
 }

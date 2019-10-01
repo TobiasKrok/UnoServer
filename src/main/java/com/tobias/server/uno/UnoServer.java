@@ -27,6 +27,7 @@ public class UnoServer implements Runnable {
     private static final Logger LOGGER = LogManager.getLogger(UnoServer.class.getName());
     public static int minPlayers;
     private Map<String, AbstractCommandHandler> handlers;
+    private ScheduledExecutorService ses;
     private UnoClientManager unoClientManager;
     private CommandWorker worker;
     private boolean running;
@@ -40,6 +41,7 @@ public class UnoServer implements Runnable {
         this.handlers.put("CLIENT", new ClientCommandHandler(this.unoClientManager));
         this.handlers.put("GAME", new GameCommandHandler(this.unoClientManager));
         this.worker = new CommandWorker(handlers);
+        ses = Executors.newSingleThreadScheduledExecutor();
         Thread t = new Thread(worker);
         t.setName("CommandWorker-UnoServer-" + t.getId());
         t.start();
@@ -51,22 +53,13 @@ public class UnoServer implements Runnable {
         this.accepting = true;
         try (ServerSocket socket = new ServerSocket(this.port)) {
             startPolling();
+            startInGameCheck();
             LOGGER.info("Server started on port " + this.port + " with max players allowed: " + minPlayers);
             while (running) {
                 if (accepting) {
                     UnoClient unoClient = new UnoClient(socket.accept(), unoClientManager.getClients().size(), new CommandWorker(handlers));
                     LOGGER.info("Client connected: " + unoClient.getIpAddress());
                     initiateClient(unoClient);
-                }
-                if (unoClientManager.getClients().size() == minPlayers) {
-                    accepting = false;
-                    if (!unoClientManager.clientsAreInGame()) {
-                        initializeGame(unoClientManager.getPlayerIds());
-                    }
-                } else {
-                    // If minPlayers has been hit but a client disconnected, we have to set
-                    // accepting to true so a new player can join.
-                    accepting = true;
                 }
             }
         } catch (IOException e) {
@@ -87,24 +80,37 @@ public class UnoServer implements Runnable {
     }
 
     private void initializeGame(List<Integer> playerIds) {
-        unoClientManager
-        worker.process(new Command(CommandType.GAME_START,playerIds.stream().map(String::valueOf).collect(Collectors.joining(","))));
+       // unoClientManager
+        worker.process(new Command(CommandType.GAME_START,playerIds.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","))));
       //  worker.process(new Command(CommandType.GAME_REGISTEROPPONENTPLAYER, ));
         worker.process(new Command(CommandType.GAME_SETCARD, "7"));
     }
 
+    private void startInGameCheck (){
+        // Schedule check
+        ses.scheduleAtFixedRate(() -> {
+            if (unoClientManager.getClients().size() == minPlayers) {
+                accepting = false;
+                if (!unoClientManager.clientsAreInGame()) {
+                    initializeGame(unoClientManager.getPlayerIds());
+                }
+            } else {
+                // If minPlayers has been hit but a client disconnected, we have to set
+                // accepting to true so a new player can join.
+                accepting = true;
+            }
+        },0, 4, TimeUnit.SECONDS);
+    }
+
     private void startPolling() {
-        ScheduledExecutorService ses;
-        ses = Executors.newSingleThreadScheduledExecutor();
-        ses.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                List<UnoClient> clients = unoClientManager.checkForDisconnect();
-                if (clients.size() > 0) {
-                    for (UnoClient client : clients) {
-                        // handlers.get("PLAYER").process(new Command(CommandType.PLAYER_DISCONNECT,Integer.toString(client.getId())),client);
-                        worker.process(new Command(CommandType.CLIENT_DISCONNECT, Integer.toString(client.getId())));
-                    }
+        ses.scheduleAtFixedRate(() -> {
+            List<UnoClient> clients = unoClientManager.checkForDisconnect();
+            if (clients.size() > 0) {
+                for (UnoClient client : clients) {
+                    // handlers.get("PLAYER").process(new Command(CommandType.PLAYER_DISCONNECT,Integer.toString(client.getId())),client);
+                    worker.process(new Command(CommandType.CLIENT_DISCONNECT, Integer.toString(client.getId())));
                 }
             }
         }, 0, 8, TimeUnit.SECONDS);

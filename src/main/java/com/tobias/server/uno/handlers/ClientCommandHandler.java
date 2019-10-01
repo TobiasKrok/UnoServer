@@ -32,6 +32,7 @@ public class ClientCommandHandler extends AbstractCommandHandler {
         switch (command.getType()) {
             case CLIENT_DISCONNECT:
                 clientManager.sendToAllClients(new Command(CommandType.CLIENT_DISCONNECT, command.getData()));
+                break;
             default:
                 LOGGER.error("Could not process command: " + command.toString());
         }

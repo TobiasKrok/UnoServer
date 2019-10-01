@@ -15,6 +15,9 @@ public class GameManager {
         this.players = players;
     }
 
+    public boolean canDraw(int n) {
+        return (table.getDeck().getDeckCount() >= n);
+    }
     public String draw(Player player, int n) {
         List<Card> cards = table.deal(player,n);
         return cards.stream()
@@ -24,6 +27,10 @@ public class GameManager {
 
     public List<Player> getPlayers() {
         return players;
+    }
+
+    public void restockDeckAndShuffle() {
+        
     }
 
     public void createNewGame() {
