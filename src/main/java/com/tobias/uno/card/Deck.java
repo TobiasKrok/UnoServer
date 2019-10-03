@@ -22,13 +22,13 @@ public class Deck {
 
         // Add 0-9 sequence
         for (CardColor cardColor : CardColor.values()) {
-            // This if prevents it from adding a
-            if (cardColor != CardColor.SPECIAL && cardColor != CardColor.NONE) {
-                for (int i = 0; i < 9; i++) {
+            // This if prevents it from adding a special or blank color
+            if (cardColor != CardColor.BLACK && cardColor != CardColor.NONE) {
+                for (int i = 0; i <= 9; i++) {
                     cards.add(new Card(cardColor, i));
                 }
                 // Add 1-9 sequence
-                for (int i = 1; i < 9; i++) {
+                for (int i = 1; i <= 9; i++) {
                     cards.add(new Card(cardColor, i));
                 }
                 // Add action cards
@@ -36,16 +36,20 @@ public class Deck {
                     // Exclude normal cards and special cards. Special cards do not have a specific color.
                     if (cardType != CardType.NORMAL && cardType != CardType.WILD
                             && cardType != CardType.WILDDRAWFOUR) {
+                        // Add two cards for each color.
+                        cards.add(new Card(cardColor, cardType));
                         cards.add(new Card(cardColor, cardType));
                     }
                 }
             }
         }
         // Add special cards
-        for (int i = 0; i < 4; i++) {
-            cards.add(new Card(CardColor.SPECIAL, CardType.WILDDRAWFOUR));
-            cards.add(new Card(CardColor.SPECIAL, CardType.WILD));
+        for (int i = 0; i <= 4; i++) {
+            cards.add(new Card(CardColor.BLACK, CardType.WILDDRAWFOUR));
+            cards.add(new Card(CardColor.BLACK, CardType.WILD));
         }
+
+        printDeck();
     }
 
     public int getDeckCount() {
@@ -72,6 +76,11 @@ public class Deck {
         return null;
     }
 
+    private void printDeck() {
+        for(Card c: cards) {
+            System.out.println(c.toString());
+        }
+    }
     List<Card> getCards() {
         return this.cards;
     }

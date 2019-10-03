@@ -46,7 +46,12 @@ public class GameManager {
     public int getCardsOnTableCount() {
         return table.getCardsOnTableCount();
     }
+
     public String getTopCard() {
-        return table.getTopCard().toString();
+        if(!(table.getTopCard() == null)) {
+            return table.getTopCard().toString();
+        }
+        // Return blank if null.
+        return "";
     }
 }

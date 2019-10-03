@@ -19,7 +19,10 @@ public class Table {
     }
 
     public Card getTopCard(){
+        if(cardsOnTable.size() != 0)
         return cardsOnTable.get(cardsOnTable.size() - 1);
+
+        return null;
     }
 
 
@@ -44,7 +47,7 @@ public class Table {
     public void setTopCard() {
         Card c;
         if(!((c = deck.get(deck.getCards().size() - 1)) == null)
-                && c.getCardColor() != CardColor.SPECIAL
+                && c.getCardColor() != CardColor.BLACK
                 && c.getCardType() == CardType.NORMAL)  {
             cardsOnTable.add(deck.get(deck.getCards().size() - 1));
         }
