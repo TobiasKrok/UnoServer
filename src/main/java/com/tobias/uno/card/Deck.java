@@ -3,7 +3,6 @@ package com.tobias.uno.card;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 public class Deck {
@@ -11,7 +10,7 @@ public class Deck {
     private List<Card> cards;
 
 
-    public Deck() {
+    Deck() {
         this.cards = new ArrayList<>();
         createDeck();
         shuffle();
@@ -64,18 +63,25 @@ public class Deck {
         cards.add(c);
     }
 
+   public Card get(int index) {
+        if(!(index > cards.size())) {
+            Card c = cards.get(index);
+            cards.remove(c);
+            return c;
+        }
+        return null;
+    }
+
     List<Card> getCards() {
         return this.cards;
     }
 
     List<Card> draw(int n) {
         List<Card> cards = new ArrayList<>();
-        Iterator iter = cards.iterator();
-        while (iter.hasNext()) {
-            cards.add((Card) iter.next());
-            iter.remove();
-
+        for(int i = 0; i < n; i++) {
+            cards.add(get(i));
         }
         return cards;
     }
 }
+

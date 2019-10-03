@@ -16,7 +16,7 @@ public class Player {
         this.id = id;
     }
 
-    public void setInGame(boolean val) {
+    void setInGame(boolean val) {
         this.isInGame = val;
     }
 
@@ -33,8 +33,13 @@ public class Player {
     public void addToHand(List<Card> cards){
         this.hand.addAll(cards);
     }
+
     protected void clearHand() {
         this.hand.clear();
+    }
+
+    public int getHandCount() {
+        return hand.size();
     }
 
 }

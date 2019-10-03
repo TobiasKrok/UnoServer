@@ -39,4 +39,14 @@ public class GameManager {
         this.table = game.getTable();
         game.start();
     }
+
+    public int getDeckCount() {
+        return table.getDeck().getDeckCount();
+    }
+    public int getCardsOnTableCount() {
+        return table.getCardsOnTableCount();
+    }
+    public String getTopCard() {
+        return table.getTopCard().toString();
+    }
 }

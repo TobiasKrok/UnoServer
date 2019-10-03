@@ -18,7 +18,7 @@ public class Table {
 
     }
 
-    public Card getCurrentCard(){
+    public Card getTopCard(){
         return cardsOnTable.get(cardsOnTable.size() - 1);
     }
 
@@ -41,15 +41,26 @@ public class Table {
         return cards;
     }
 
+    public void setTopCard() {
+        Card c;
+        if(!((c = deck.get(deck.getCards().size() - 1)) == null)
+                && c.getCardColor() != CardColor.SPECIAL
+                && c.getCardType() == CardType.NORMAL)  {
+            cardsOnTable.add(deck.get(deck.getCards().size() - 1));
+        }
+    }
+
+    public int getCardsOnTableCount() {
+        return cardsOnTable.size();
+    }
    public void restockDeck() {
         Iterator iter = cardsOnTable.iterator();
         while (iter.hasNext()) {
             Card c = (Card) iter.next();
-            if(c != getCurrentCard()) {
+            if(c != getTopCard()) {
                 deck.add(c);
                 iter.remove();
             }
         }
     }
-
 }
