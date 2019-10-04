@@ -12,8 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 
 public class UnoClientManager {
-   private List<UnoClient> unoClients;
-   private static final Logger LOGGER = LogManager.getLogger(UnoClientManager.class.getName());
+    private List<UnoClient> unoClients;
+    private static final Logger LOGGER = LogManager.getLogger(UnoClientManager.class.getName());
 
 
     public UnoClientManager() {
@@ -21,8 +21,8 @@ public class UnoClientManager {
 
     }
 
-    public void addClient(UnoClient unoClient){
-        if(unoClient != null){
+    public void addClient(UnoClient unoClient) {
+        if (unoClient != null) {
             unoClients.add(unoClient);
         }
     }
@@ -31,8 +31,8 @@ public class UnoClientManager {
         try {
             unoClient.write(command.toString());
             LOGGER.debug("Command sent to Client " + unoClient.getId() + ": " + command.toString());
-        } catch (IOException e){
-            LOGGER.error("Failed to write to Client " + unoClient.getId(),e);
+        } catch (IOException e) {
+            LOGGER.error("Failed to write to Client " + unoClient.getId(), e);
             unoClient.close();
         }
     }
@@ -40,7 +40,7 @@ public class UnoClientManager {
     public List<UnoClient> checkForDisconnect() {
         List<UnoClient> disc = new ArrayList<>();
         Iterator<UnoClient> iter = unoClients.iterator();
-        while(iter.hasNext()){
+        while (iter.hasNext()) {
             UnoClient c = iter.next();
             sendToClient(c, new Command(CommandType.CLIENT_POLL, ""));
             if (c.isDisconnected()) {
@@ -50,13 +50,14 @@ public class UnoClientManager {
         }
         return disc;
     }
+
     public List<UnoClient> getClients() {
         return this.unoClients;
     }
 
-    public void sendToAllClients(Command command){
-        for(UnoClient unoClient : unoClients){
-           sendToClient(unoClient,command);
+    public void sendToAllClients(Command command) {
+        for (UnoClient unoClient : unoClients) {
+            sendToClient(unoClient, command);
         }
     }
 
@@ -67,9 +68,10 @@ public class UnoClientManager {
         }
         return ids;
     }
+
     public List<Player> getPlayerFromClients() {
         List<Player> players = new ArrayList<>();
-        for (UnoClient c : unoClients){
+        for (UnoClient c : unoClients) {
             players.add(c.getPlayer());
         }
         return players;
@@ -77,7 +79,7 @@ public class UnoClientManager {
 
     public boolean clientsAreInGame() {
         for (Player p : getPlayerFromClients()) {
-            if(p.isInGame()) {
+            if (p.isInGame()) {
                 return true;
             }
         }

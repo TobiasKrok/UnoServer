@@ -47,7 +47,7 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 break;
             case GAME_SETCARD:
                 for (UnoClient c : unoClientManager.getClients()) {
-                 //   unoClientManager.sendToClient(c, new Command(CommandType.GAME_SETCARD, gameManager.draw(c.getPlayer(), Integer.parseInt(command.getData()))));
+                    unoClientManager.sendToClient(c, new Command(CommandType.GAME_SETCARD, gameManager.draw(c.getPlayer(), Integer.parseInt(command.getData()))));
                 }
                 updateGameInfo();
                 break;
@@ -61,8 +61,8 @@ public class GameCommandHandler extends AbstractCommandHandler {
         unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETDECKCOUNT, String.valueOf(gameManager.getDeckCount())));
         unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETCARDSONTABLECOUNT, String.valueOf(gameManager.getCardsOnTableCount())));
         unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETTOPCARD, gameManager.getTopCard()));
-        for(UnoClient client : unoClientManager.getClients()) {
-            unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETOPPONENTPLAYERCARDCOUNT,client.getId() + ":" + client.getPlayer().getHandCount()));
+        for (UnoClient client : unoClientManager.getClients()) {
+            unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETOPPONENTPLAYERCARDCOUNT, client.getId() + ":" + client.getPlayer().getHandCount()));
         }
     }
 }

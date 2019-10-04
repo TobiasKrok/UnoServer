@@ -32,7 +32,7 @@ public class UnoClient implements Runnable {
             this.output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
-           LOGGER.error("Failed initializing BufferedReader/Writer",e);
+            LOGGER.error("Failed initializing BufferedReader/Writer", e);
         }
     }
 
@@ -52,7 +52,7 @@ public class UnoClient implements Runnable {
                         LOGGER.error("Thread.sleep interrupted", e);
                     }
             } catch (IOException e) {
-                LOGGER.error("Error reading input",e);
+                LOGGER.error("Error reading input", e);
             }
         }
     }
@@ -74,7 +74,7 @@ public class UnoClient implements Runnable {
             return input.readLine();
 
         } catch (IOException e) {
-            LOGGER.fatal("Error on reading input!",e);
+            LOGGER.fatal("Error on reading input!", e);
         }
         return null;
     }

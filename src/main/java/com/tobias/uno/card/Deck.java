@@ -63,12 +63,13 @@ public class Deck {
     void add(List<Card> cards) {
         this.cards.addAll(cards);
     }
+
     void add(Card c) {
         cards.add(c);
     }
 
-   public Card get(int index) {
-        if(!(index > cards.size())) {
+    Card get(int index) {
+        if (!(index > cards.size())) {
             Card c = cards.get(index);
             cards.remove(c);
             return c;
@@ -77,17 +78,18 @@ public class Deck {
     }
 
     private void printDeck() {
-        for(Card c: cards) {
+        for (Card c : cards) {
             System.out.println(c.toString());
         }
     }
+
     List<Card> getCards() {
         return this.cards;
     }
 
     List<Card> draw(int n) {
         List<Card> cards = new ArrayList<>();
-        for(int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) {
             cards.add(get(i));
         }
         return cards;
