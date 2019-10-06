@@ -64,5 +64,6 @@ public class GameCommandHandler extends AbstractCommandHandler {
         for (UnoClient client : unoClientManager.getClients()) {
             unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETOPPONENTPLAYERCARDCOUNT, client.getId() + ":" + client.getPlayer().getHandCount()));
         }
+        unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETNEXTTURN,String.valueOf(gameManager.nextTurn())));
     }
 }

@@ -54,4 +54,8 @@ public class GameManager {
         // Return blank if null.
         return "";
     }
+
+    public int nextTurn() {
+        return game.queueNext().getId();
+    }
 }
