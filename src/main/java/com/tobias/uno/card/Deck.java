@@ -60,11 +60,11 @@ public class Deck {
         Collections.shuffle(cards);
     }
 
-    void add(List<Card> cards) {
+    public void add(List<Card> cards) {
         this.cards.addAll(cards);
     }
 
-    void add(Card c) {
+    public void add(Card c) {
         cards.add(c);
     }
 

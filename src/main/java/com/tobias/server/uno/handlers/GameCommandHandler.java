@@ -30,6 +30,11 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 unoClientManager.sendToClient(unoClient, new Command(CommandType.GAME_SETCARD, gameManager.draw(unoClient.getPlayer(), Integer.parseInt(command.getData()))));
                 updateGameInfo();
                 break;
+            case GAME_PLAYERDISCONNECT:
+                gameManager.disconnectPlayer(unoClient.getPlayer());
+                unoClientManager.sendToAllClients(new Command(CommandType.GAME_PLAYERDISCONNECT,String.valueOf(unoClient.getPlayer().getId())));
+                updateGameInfo();
+                break;
             default:
                 LOGGER.error("Could not process command: " + command.toString() + " which should be sent to client: " + unoClient.getId());
                 break;
@@ -40,8 +45,8 @@ public class GameCommandHandler extends AbstractCommandHandler {
     public void process(Command command) {
         switch (command.getType()) {
             case GAME_START:
-                this.gameManager = new GameManager(unoClientManager.getPlayerFromClients());
-                gameManager.createNewGame();
+                this.gameManager = new GameManager();
+                gameManager.createNewGame(unoClientManager.getPlayerFromClients());
                 unoClientManager.sendToAllClients(new Command(CommandType.GAME_START, command.getData()));
                 updateGameInfo();
                 break;
@@ -56,6 +61,7 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 break;
         }
     }
+
 
     private void updateGameInfo() {
         unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETDECKCOUNT, String.valueOf(gameManager.getDeckCount())));

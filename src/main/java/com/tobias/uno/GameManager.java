@@ -9,11 +9,7 @@ import java.util.stream.Collectors;
 public class GameManager {
     private Game game;
     private Table table;
-    private List<Player> players;
 
-    public GameManager(List<Player> players) {
-        this.players = players;
-    }
 
     public boolean canDraw(int n) {
         return (table.getDeck().getDeckCount() >= n);
@@ -25,16 +21,13 @@ public class GameManager {
                 .collect(Collectors.joining(","));
     }
 
-    public List<Player> getPlayers() {
-        return players;
-    }
 
     public void restockDeckAndShuffle() {
         table.restockDeck();
         table.getDeck().shuffle();
     }
 
-    public void createNewGame() {
+    public void createNewGame(List<Player> players) {
         this.game = new Game(players);
         this.table = game.getTable();
         game.start();
@@ -57,5 +50,11 @@ public class GameManager {
 
     public int nextTurn() {
         return game.queueNext().getId();
+    }
+
+    public void disconnectPlayer(Player p) {
+        table.getDeck().add(p.getHand());
+        p.clearHand();
+        game.getPlayers().remove(p);
     }
 }

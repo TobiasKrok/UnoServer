@@ -28,8 +28,6 @@ public class Player {
         return id;
     }
 
-
-
     public void addToHand(List<Card> cards){
         this.hand.addAll(cards);
     }
@@ -41,5 +39,7 @@ public class Player {
     public int getHandCount() {
         return hand.size();
     }
-
+    List<Card> getHand() {
+        return hand;
+    }
 }

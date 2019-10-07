@@ -11,18 +11,5 @@ public class Main {
         UnoServer unoServer = new UnoServer(Integer.parseInt(args[0]));
         UnoServer.minPlayers = Integer.parseInt(args[1]);
         new Thread(unoServer).start();
-
-/*            Game game = new Game();
-            List<Player> players = new ArrayList<>();
-            for (UnoClient c : unoServer.getUnoClients()) {
-                players.add(c.getPlayer());
-            }
-            try {
-                game.setPlayers(players);
-            } catch (InvalidParameterException e) {
-
-            }
-
-            unoServer.setGameInstance(game);*/
         }
 }

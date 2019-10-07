@@ -107,7 +107,7 @@ public class UnoServer implements Runnable {
             List<UnoClient> clients = unoClientManager.checkForDisconnect();
             if (clients.size() > 0) {
                 for (UnoClient client : clients) {
-                    // handlers.get("PLAYER").process(new Command(CommandType.PLAYER_DISCONNECT,Integer.toString(client.getId())),client);
+                    worker.process(new Command(CommandType.GAME_PLAYERDISCONNECT), client);
                     worker.process(new Command(CommandType.CLIENT_DISCONNECT, Integer.toString(client.getId())));
                 }
             }
