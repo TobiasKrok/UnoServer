@@ -48,7 +48,7 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 this.gameManager = new GameManager();
                 gameManager.createNewGame(unoClientManager.getPlayerFromClients());
                 unoClientManager.sendToAllClients(new Command(CommandType.GAME_START, command.getData()));
-                updateGameInfo();
+                //updateGameInfo();
                 break;
             case GAME_SETCARD:
                 for (UnoClient c : unoClientManager.getClients()) {

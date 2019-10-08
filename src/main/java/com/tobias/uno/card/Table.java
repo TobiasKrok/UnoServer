@@ -18,15 +18,15 @@ public class Table {
 
     }
 
-    public Card getTopCard(){
-        if(cardsOnTable.size() != 0)
-        return cardsOnTable.get(cardsOnTable.size() - 1);
+    public Card getTopCard() {
+        if (cardsOnTable.size() != 0)
+            return cardsOnTable.get(cardsOnTable.size() - 1);
 
         return null;
     }
 
 
-    public void addCardToTable(Card c){
+    public void addCardToTable(Card c) {
         cardsOnTable.add(c);
     }
 
@@ -34,11 +34,11 @@ public class Table {
         return deck;
     }
 
-    public void addCardToTable(List<Card> cards){
+    public void addCardToTable(List<Card> cards) {
         cardsOnTable.addAll(cards);
     }
 
-    public List<Card> deal(Player p, int n){
+    public List<Card> deal(Player p, int n) {
         List<Card> cards = deck.draw(n);
         p.addToHand(cards);
         return cards;
@@ -46,21 +46,23 @@ public class Table {
 
     public void setTopCard() {
         Card c;
-        if(!((c = deck.get(deck.getCards().size() - 1)) == null)
-                && c.getCardColor() != CardColor.BLACK
-                && c.getCardType() == CardType.NORMAL)  {
-            cardsOnTable.add(deck.get(deck.getCards().size() - 1));
+        // TODO fix this if lol
+        if (!((c = deck.get(deck.getCards().size() - 1)) == null)) {
+            if ((c.getCardType() == CardType.NORMAL)) {
+                cardsOnTable.add(deck.get(deck.getCards().size() - 1));
+            }
         }
     }
 
     public int getCardsOnTableCount() {
         return cardsOnTable.size();
     }
-   public void restockDeck() {
+
+    public void restockDeck() {
         Iterator iter = cardsOnTable.iterator();
         while (iter.hasNext()) {
             Card c = (Card) iter.next();
-            if(c != getTopCard()) {
+            if (c != getTopCard()) {
                 deck.add(c);
                 iter.remove();
             }

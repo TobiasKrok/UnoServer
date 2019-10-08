@@ -48,8 +48,6 @@ public class Deck {
             cards.add(new Card(CardColor.BLACK, CardType.WILDDRAWFOUR));
             cards.add(new Card(CardColor.BLACK, CardType.WILD));
         }
-
-        printDeck();
     }
 
     public int getDeckCount() {
@@ -77,11 +75,6 @@ public class Deck {
         return null;
     }
 
-    private void printDeck() {
-        for (Card c : cards) {
-            System.out.println(c.toString());
-        }
-    }
 
     List<Card> getCards() {
         return this.cards;
