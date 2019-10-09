@@ -66,7 +66,7 @@ public class Deck {
         cards.add(c);
     }
 
-    Card get(int index) {
+    synchronized Card get(int index) {
         if (!(index > cards.size())) {
             Card c = cards.get(index);
             cards.remove(c);
@@ -80,7 +80,7 @@ public class Deck {
         return this.cards;
     }
 
-    List<Card> draw(int n) {
+   synchronized List<Card> draw(int n) {
         List<Card> cards = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             cards.add(get(i));

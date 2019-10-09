@@ -12,8 +12,9 @@ public class GameManager {
 
 
     public boolean canDraw(int n) {
-        return (table.getDeck().getDeckCount() >= n);
+        return (table.getDeck().getDeckCount() <= n);
     }
+
     public String draw(Player player, int n) {
         List<Card> cards = table.deal(player,n);
         return cards.stream()

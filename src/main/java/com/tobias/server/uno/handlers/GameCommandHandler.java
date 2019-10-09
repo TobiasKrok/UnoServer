@@ -25,6 +25,7 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 // If deck.size < ToInt(command.getData) reshuffle deck and notify client
                 // Then send requested card
                 if (!gameManager.canDraw(Integer.parseInt(command.getData()))) {
+                    System.out.println("YUUUUP");
                     gameManager.restockDeckAndShuffle();
                 }
                 unoClientManager.sendToClient(unoClient, new Command(CommandType.GAME_SETCARD, gameManager.draw(unoClient.getPlayer(), Integer.parseInt(command.getData()))));
