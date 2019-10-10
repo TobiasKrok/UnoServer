@@ -63,6 +63,7 @@ public class Table {
         while (iter.hasNext()) {
             Card c = (Card) iter.next();
             if (c != getTopCard()) {
+                System.out.println("LOOl");
                 deck.add(c);
                 iter.remove();
             }

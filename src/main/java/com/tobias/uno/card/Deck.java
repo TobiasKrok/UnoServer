@@ -67,7 +67,7 @@ public class Deck {
     }
 
     synchronized Card get(int index) {
-        if (!(index > cards.size())) {
+        if (index < cards.size() - 1) {
             Card c = cards.get(index);
             cards.remove(c);
             return c;
@@ -82,7 +82,7 @@ public class Deck {
 
    synchronized List<Card> draw(int n) {
         List<Card> cards = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
+        for (int i = n; i >= 0; i--) {
             cards.add(get(i));
         }
         return cards;

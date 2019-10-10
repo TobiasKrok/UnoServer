@@ -25,7 +25,6 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 // If deck.size < ToInt(command.getData) reshuffle deck and notify client
                 // Then send requested card
                 if (!gameManager.canDraw(Integer.parseInt(command.getData()))) {
-                    System.out.println("YUUUUP");
                     gameManager.restockDeckAndShuffle();
                 }
                 unoClientManager.sendToClient(unoClient, new Command(CommandType.GAME_SETCARD, gameManager.draw(unoClient.getPlayer(), Integer.parseInt(command.getData()))));
@@ -34,6 +33,10 @@ public class GameCommandHandler extends AbstractCommandHandler {
             case GAME_PLAYERDISCONNECT:
                 gameManager.disconnectPlayer(unoClient.getPlayer());
                 unoClientManager.sendToAllClients(new Command(CommandType.GAME_PLAYERDISCONNECT,String.valueOf(unoClient.getPlayer().getId())));
+                updateGameInfo();
+                break;
+            case GAME_LAYCARD:
+                gameManager.layCard(unoClient.getPlayer(),command.getData());
                 updateGameInfo();
                 break;
             default:
@@ -49,7 +52,7 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 this.gameManager = new GameManager();
                 gameManager.createNewGame(unoClientManager.getPlayerFromClients());
                 unoClientManager.sendToAllClients(new Command(CommandType.GAME_START, command.getData()));
-                //updateGameInfo();
+                updateGameInfo();
                 break;
             case GAME_SETCARD:
                 for (UnoClient c : unoClientManager.getClients()) {

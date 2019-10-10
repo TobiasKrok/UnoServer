@@ -16,16 +16,18 @@ public class Game {
     private static final Logger LOGGER = LogManager.getLogger(Game.class.getName());
     private Player currentPlayer;
 
-    public Game(List<Player> players) {
+    Game(List<Player> players) {
         this.queue = new LinkedList<>();
         this.table = new Table();
         this.players = players;
         queue.addAll(players);
     }
+
     public boolean isInProgress() {
         return this.inProgress;
     }
-    public void start() {
+
+    void start() {
         this.inProgress = true;
         for (Player p : players) {
             p.setInGame(true);
@@ -46,7 +48,7 @@ public class Game {
         return this.table;
     }
 
-    protected List<Player> getPlayers() {
+    List<Player> getPlayers() {
         return this.players;
     }
 }

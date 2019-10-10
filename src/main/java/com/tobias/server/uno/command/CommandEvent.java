@@ -19,4 +19,12 @@ class CommandEvent {
     UnoClient getUnoClient() {
         return unoClient;
     }
+
+    @Override
+    public String toString() {
+        return "CommandEvent{" +
+                "command=" + command.toString() +
+                ", unoClient=" + unoClient.getId() +
+                '}';
+    }
 }

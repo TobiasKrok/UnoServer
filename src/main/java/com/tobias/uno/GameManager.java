@@ -12,11 +12,11 @@ public class GameManager {
 
 
     public boolean canDraw(int n) {
-        return (table.getDeck().getDeckCount() <= n);
+        return (table.getDeck().getDeckCount() >= n);
     }
 
     public String draw(Player player, int n) {
-        List<Card> cards = table.deal(player,n);
+        List<Card> cards = table.deal(player, n);
         return cards.stream()
                 .map(Card::toString)
                 .collect(Collectors.joining(","));
@@ -37,12 +37,13 @@ public class GameManager {
     public int getDeckCount() {
         return table.getDeck().getDeckCount();
     }
+
     public int getCardsOnTableCount() {
         return table.getCardsOnTableCount();
     }
 
     public String getTopCard() {
-        if(!(table.getTopCard() == null)) {
+        if (!(table.getTopCard() == null)) {
             return table.getTopCard().toString();
         }
         // Return blank if null.
@@ -51,6 +52,16 @@ public class GameManager {
 
     public int nextTurn() {
         return game.queueNext().getId();
+    }
+
+    public void layCard(Player p, String cardStr) {
+        for (Card c : p.getHand()) {
+            if (c.toString().equals(cardStr)) {
+                table.addCardToTable(c);
+                p.getHand().remove(c);
+                break;
+            }
+        }
     }
 
     public void disconnectPlayer(Player p) {
