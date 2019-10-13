@@ -83,7 +83,7 @@ public class UnoServer implements Runnable {
         worker.process(new Command(CommandType.GAME_START, playerIds.stream()
                 .map(String::valueOf)
                 .collect(Collectors.joining(","))));
-        worker.process(new Command(CommandType.GAME_SETCARD, "45"));
+        worker.process(new Command(CommandType.GAME_SETCARD, "7"));
     }
 
     private void startInGameCheck() {

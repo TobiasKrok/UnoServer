@@ -40,8 +40,7 @@ public class Game {
             this.currentPlayer = queue.get(0);
             return currentPlayer;
         }
-        this.currentPlayer = queue.get(queue.indexOf(currentPlayer) + 1);
-        return currentPlayer;
+        return (currentPlayer = queue.get(queue.indexOf(currentPlayer) + 1));
     }
 
     Table getTable() {

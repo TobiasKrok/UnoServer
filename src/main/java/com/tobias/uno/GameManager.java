@@ -53,13 +53,16 @@ public class GameManager {
     public int nextTurn() {
         return game.queueNext().getId();
     }
+    private void setNextTurn(Player p) {
+
+    }
 
     public void layCard(Player p, String cardStr) {
         for (Card c : p.getHand()) {
             if (c.toString().equals(cardStr)) {
                 table.addCardToTable(c);
                 p.getHand().remove(c);
-                break;
+                return;
             }
         }
     }

@@ -3,6 +3,7 @@ package com.tobias.uno.card;
 import com.tobias.uno.Player;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -45,12 +46,15 @@ public class Table {
     }
 
     public void setTopCard() {
-        Card c;
-        // TODO fix this if lol
-        if (!((c = deck.get(deck.getCards().size() - 1)) == null)) {
-            if ((c.getCardType() == CardType.NORMAL)) {
-                cardsOnTable.add(deck.get(deck.getCards().size() - 1));
+        // TODO yes bad, fix later
+        while(true) {
+            Card c = deck.getCards().get(deck.getCards().size() - 1);
+            if(c.getCardType() == CardType.NORMAL) {
+                cardsOnTable.add(c);
+                return;
             }
+            // Move card to the middle of the deck if the card was not a normal card.
+            Collections.swap(deck.getCards(),deck.getCards().size() - 1,(deck.getCards().size() - 1) / 2);
         }
     }
 
@@ -63,7 +67,6 @@ public class Table {
         while (iter.hasNext()) {
             Card c = (Card) iter.next();
             if (c != getTopCard()) {
-                System.out.println("LOOl");
                 deck.add(c);
                 iter.remove();
             }

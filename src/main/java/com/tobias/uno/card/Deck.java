@@ -66,7 +66,7 @@ public class Deck {
         cards.add(c);
     }
 
-    synchronized Card get(int index) {
+    private synchronized Card get(int index) {
         if (index < cards.size() - 1) {
             Card c = cards.get(index);
             cards.remove(c);
