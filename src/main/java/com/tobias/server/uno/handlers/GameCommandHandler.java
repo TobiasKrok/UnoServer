@@ -36,6 +36,10 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 updateGameInfo();
                 break;
             case GAME_LAYCARD:
+                // GAME_LAYCARD should only contain a single card.
+                switch (command.getData()){
+                  //  []
+                }
                 gameManager.layCard(unoClient.getPlayer(),command.getData());
                 updateGameInfo();
                 break;
