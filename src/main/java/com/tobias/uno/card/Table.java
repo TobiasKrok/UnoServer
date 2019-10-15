@@ -51,6 +51,7 @@ public class Table {
             Card c = deck.getCards().get(deck.getCards().size() - 1);
             if(c.getCardType() == CardType.NORMAL) {
                 cardsOnTable.add(c);
+                deck.getCards().remove(c);
                 return;
             }
             // Move card to the middle of the deck if the card was not a normal card.

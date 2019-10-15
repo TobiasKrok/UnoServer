@@ -5,6 +5,7 @@ import com.tobias.server.uno.client.UnoClientManager;
 import com.tobias.server.uno.command.Command;
 import com.tobias.server.uno.command.CommandType;
 import com.tobias.uno.GameManager;
+import com.tobias.uno.card.Card;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,15 +33,12 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 break;
             case GAME_PLAYERDISCONNECT:
                 gameManager.disconnectPlayer(unoClient.getPlayer());
-                unoClientManager.sendToAllClients(new Command(CommandType.GAME_PLAYERDISCONNECT,String.valueOf(unoClient.getPlayer().getId())));
+                unoClientManager.sendToAllClients(new Command(CommandType.GAME_PLAYERDISCONNECT, String.valueOf(unoClient.getPlayer().getId())));
                 updateGameInfo();
                 break;
             case GAME_LAYCARD:
                 // GAME_LAYCARD should only contain a single card.
-                switch (command.getData()){
-                  //  []
-                }
-                gameManager.layCard(unoClient.getPlayer(),command.getData());
+                gameManager.layCard(unoClient.getPlayer(), command.getData());
                 updateGameInfo();
                 break;
             default:
@@ -78,6 +76,22 @@ public class GameCommandHandler extends AbstractCommandHandler {
         for (UnoClient client : unoClientManager.getClients()) {
             unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETOPPONENTPLAYERCARDCOUNT, client.getId() + ":" + client.getPlayer().getHandCount()));
         }
-        unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETNEXTTURN,String.valueOf(gameManager.nextTurn())));
+        unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETNEXTTURN, String.valueOf(gameManager.nextTurn())));
+    }
+
+    private void handleLayCard(Command command, UnoClient client) {
+        Card c;
+        if ((c = gameManager.getCardByString(client.getPlayer(), command.getData())) != null) {
+            switch (c.getCardType()) {
+                case NORMAL:
+                    gameManager.layCard(client.getPlayer(), c);
+                    break;
+                case WILD:
+                    gameManager.layCard(client.getPlayer(), c);
+                    break;
+                case WILDDRAWFOUR:
+
+            }
+        }
     }
 }

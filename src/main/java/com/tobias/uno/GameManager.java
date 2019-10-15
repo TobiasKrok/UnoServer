@@ -57,15 +57,22 @@ public class GameManager {
 
     }
 
-    public void layCard(Player p, String cardStr) {
+    public void layCard(Player p, Card card) {
+        table.addCardToTable(card);
+        p.getHand().remove(card);
+
+    }
+
+    public Card getCardByString(Player p, String cardStr) {
         for (Card c : p.getHand()) {
-            if (c.toString().equals(cardStr)) {
-                table.addCardToTable(c);
-                p.getHand().remove(c);
-                return;
+            if (c.toString().equals(cardStr)){
+                return c;
             }
         }
+        return null;
     }
+
+
 
     public void disconnectPlayer(Player p) {
         table.getDeck().add(p.getHand());

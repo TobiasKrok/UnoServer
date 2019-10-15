@@ -4,23 +4,20 @@ import com.tobias.uno.card.Table;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class Game {
 
     private List<Player> players;
-    private LinkedList<Player> queue;
     private Table table;
+    private Queue queue;
     private boolean inProgress;
     private static final Logger LOGGER = LogManager.getLogger(Game.class.getName());
-    private Player currentPlayer;
 
     Game(List<Player> players) {
-        this.queue = new LinkedList<>();
         this.table = new Table();
         this.players = players;
-        queue.addAll(players);
+        this.queue = new Queue(players);
     }
 
     public boolean isInProgress() {
@@ -34,13 +31,6 @@ public class Game {
         }
         table.setTopCard();
         LOGGER.info("Game started with " + players.size() + " players!");
-    }
-    Player queueNext() {
-        if(currentPlayer == null || queue.getLast() == currentPlayer ) {
-            this.currentPlayer = queue.get(0);
-            return currentPlayer;
-        }
-        return (currentPlayer = queue.get(queue.indexOf(currentPlayer) + 1));
     }
 
     Table getTable() {

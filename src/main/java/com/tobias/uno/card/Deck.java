@@ -82,7 +82,7 @@ public class Deck {
 
    synchronized List<Card> draw(int n) {
         List<Card> cards = new ArrayList<>();
-        for (int i = n; i >= 0; i--) {
+        for (int i = n; i > 0; i--) {
             cards.add(get(i));
         }
         return cards;
