@@ -5,6 +5,7 @@ import com.tobias.server.uno.client.UnoClientManager;
 import com.tobias.server.uno.command.Command;
 import com.tobias.server.uno.command.CommandType;
 import com.tobias.uno.GameManager;
+import com.tobias.uno.Player;
 import com.tobias.uno.card.Card;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,17 +30,23 @@ public class GameCommandHandler extends AbstractCommandHandler {
                     gameManager.restockDeckAndShuffle();
                 }
                 unoClientManager.sendToClient(unoClient, new Command(CommandType.GAME_SETCARD, gameManager.draw(unoClient.getPlayer(), Integer.parseInt(command.getData()))));
-                updateGameInfo();
+                updateGameInfo(false);
                 break;
             case GAME_PLAYERDISCONNECT:
                 gameManager.disconnectPlayer(unoClient.getPlayer());
                 unoClientManager.sendToAllClients(new Command(CommandType.GAME_PLAYERDISCONNECT, String.valueOf(unoClient.getPlayer().getId())));
-                updateGameInfo();
+                updateGameInfo(true);
                 break;
             case GAME_LAYCARD:
-                // GAME_LAYCARD should only contain a single card.
-                gameManager.layCard(unoClient.getPlayer(), command.getData());
-                updateGameInfo();
+                // GAME_LAYCARD should only contain a single card
+                handleLayCard(command,unoClient);
+                updateGameInfo(true);
+                break;
+            case GAME_SKIPTURN:
+                unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETNEXTTURN, String.valueOf(gameManager.nextQueue().getId())));
+                break;
+            case GAME_SETCOLOR:
+                unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETCOLOR,command.getData()));
                 break;
             default:
                 LOGGER.error("Could not process command: " + command.toString() + " which should be sent to client: " + unoClient.getId());
@@ -54,13 +61,13 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 this.gameManager = new GameManager();
                 gameManager.createNewGame(unoClientManager.getPlayerFromClients());
                 unoClientManager.sendToAllClients(new Command(CommandType.GAME_START, command.getData()));
-                updateGameInfo();
+                updateGameInfo(false);
                 break;
             case GAME_SETCARD:
                 for (UnoClient c : unoClientManager.getClients()) {
                     unoClientManager.sendToClient(c, new Command(CommandType.GAME_SETCARD, gameManager.draw(c.getPlayer(), Integer.parseInt(command.getData()))));
                 }
-                updateGameInfo();
+                updateGameInfo(true);
                 break;
             default:
                 LOGGER.error("Could not process command: " + command.toString());
@@ -69,28 +76,40 @@ public class GameCommandHandler extends AbstractCommandHandler {
     }
 
 
-    private void updateGameInfo() {
+    private void updateGameInfo(boolean nextTurn) {
         unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETDECKCOUNT, String.valueOf(gameManager.getDeckCount())));
         unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETCARDSONTABLECOUNT, String.valueOf(gameManager.getCardsOnTableCount())));
         unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETTOPCARD, gameManager.getTopCard()));
         for (UnoClient client : unoClientManager.getClients()) {
             unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETOPPONENTPLAYERCARDCOUNT, client.getId() + ":" + client.getPlayer().getHandCount()));
         }
-        unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETNEXTTURN, String.valueOf(gameManager.nextTurn())));
+        // We can update nextTurn here if the player did not need to draw multiple cards.
+        if(nextTurn) unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETNEXTTURN, String.valueOf(gameManager.nextQueue().getId())));
     }
 
     private void handleLayCard(Command command, UnoClient client) {
         Card c;
         if ((c = gameManager.getCardByString(client.getPlayer(), command.getData())) != null) {
+            Player nextPlayer = gameManager.peekNextInQueue();
             switch (c.getCardType()) {
-                case NORMAL:
-                    gameManager.layCard(client.getPlayer(), c);
-                    break;
-                case WILD:
-                    gameManager.layCard(client.getPlayer(), c);
-                    break;
                 case WILDDRAWFOUR:
-
+                    gameManager.layCard(client.getPlayer(),c);
+                    unoClientManager.sendToClient(unoClientManager.getClientByPlayer(nextPlayer),new Command(CommandType.GAME_SETCARD,gameManager.draw(nextPlayer,4)));
+                    break;
+                case REVERSE:
+                    gameManager.layCard(client.getPlayer(),c);
+                    gameManager.reverseQueue();
+                    break;
+                case SKIP:
+                    gameManager.layCard(client.getPlayer(),c);
+                    gameManager.skipNextInQueue();
+                    break;
+                case DRAWTWO:
+                    gameManager.layCard(client.getPlayer(),c);
+                    unoClientManager.sendToClient(unoClientManager.getClientByPlayer(nextPlayer),new Command(CommandType.GAME_SETCARD,gameManager.draw(nextPlayer,2)));
+                    break;
+                default:
+                    gameManager.layCard(client.getPlayer(), c);
             }
         }
     }

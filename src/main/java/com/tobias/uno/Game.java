@@ -40,4 +40,8 @@ public class Game {
     List<Player> getPlayers() {
         return this.players;
     }
+
+    Queue getQueue() {
+        return this.queue;
+    }
 }

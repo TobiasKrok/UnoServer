@@ -50,11 +50,15 @@ public class GameManager {
         return "";
     }
 
-    public int nextTurn() {
-        return game.queueNext().getId();
+    public Player nextQueue() {
+        return game.getQueue().next();
     }
-    private void setNextTurn(Player p) {
 
+    public void reverseQueue() {
+        game.getQueue().reverse();
+    }
+    public Player peekNextInQueue(){
+        return game.getQueue().peek();
     }
 
     public void layCard(Player p, Card card) {
@@ -72,6 +76,9 @@ public class GameManager {
         return null;
     }
 
+    public void skipNextInQueue() {
+        game.getQueue().toggleSkip();
+    }
 
 
     public void disconnectPlayer(Player p) {

@@ -85,4 +85,13 @@ public class UnoClientManager {
         }
         return false;
     }
+
+    public UnoClient getClientByPlayer(Player p){
+        for(UnoClient c : unoClients) {
+            if(c.getPlayer() == p) {
+                return c;
+            }
+        }
+        return null;
+    }
 }
