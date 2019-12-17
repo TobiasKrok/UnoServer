@@ -83,7 +83,9 @@ public class UnoServer implements Runnable {
         worker.process(new Command(CommandType.GAME_START, playerIds.stream()
                 .map(String::valueOf)
                 .collect(Collectors.joining(","))));
-        worker.process(new Command(CommandType.GAME_SETCARD,"7"));
+        for(UnoClient client : unoClientManager.getClients()) {
+            worker.process(new Command(CommandType.GAME_CLIENTDRAWCARD,"7"), client);
+        }
         worker.process(new Command(CommandType.GAME_SKIPTURN));
     }
 

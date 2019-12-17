@@ -14,7 +14,6 @@ public class Table {
     public Table() {
         this.cardsOnTable = new ArrayList<>();
         this.deck = new Deck();
-        // deck.draw(cardsOnTable,1);
 
 
     }
@@ -29,6 +28,9 @@ public class Table {
 
     public void addCardToTable(Card c) {
         cardsOnTable.add(c);
+        if(cardsOnTable.size() > 3) {
+
+        }
     }
 
     public Deck getDeck() {

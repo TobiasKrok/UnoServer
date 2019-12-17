@@ -75,7 +75,9 @@ public class Deck {
         return null;
     }
 
-
+    public void putBottom(Card c) {
+        cards.add(0,c);
+    }
     List<Card> getCards() {
         return this.cards;
     }
