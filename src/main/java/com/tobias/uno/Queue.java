@@ -54,7 +54,5 @@ class Queue {
         else Collections.reverse(queue);
     }
 
-
-    //https://repl.it/repls/AshamedOffensiveCharactermapping
 }
 

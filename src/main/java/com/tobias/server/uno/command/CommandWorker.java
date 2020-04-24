@@ -12,7 +12,7 @@ import java.util.Map;
 public class CommandWorker implements Runnable {
 
     private static final Logger LOGGER = LogManager.getLogger(CommandWorker.class.getName());
-    private List<Object> queue;
+    private final List<Object> queue;
     private Map<String, AbstractCommandHandler> handlers;
 
     public CommandWorker(Map<String, AbstractCommandHandler> handlers) {

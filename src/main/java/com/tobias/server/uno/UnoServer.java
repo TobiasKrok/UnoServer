@@ -114,7 +114,7 @@ public class UnoServer implements Runnable {
                     worker.process(new Command(CommandType.CLIENT_DISCONNECT, Integer.toString(client.getId())));
                 }
             }
-        }, 0, 8, TimeUnit.SECONDS);
+        }, 0, 5, TimeUnit.SECONDS);
     }
 
     public void setAccepting(boolean val) {

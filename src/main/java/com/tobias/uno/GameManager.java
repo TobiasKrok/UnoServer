@@ -9,10 +9,6 @@ public class GameManager {
     private Game game;
     private Table table;
 
-    //TODO remove
-    public boolean canDraw(int n) {
-        return (table.getDeck().getDeckCount() >= n);
-    }
 
     public List<Card> draw(Player player, int n) {
         return table.deal(player, n);

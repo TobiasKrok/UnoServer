@@ -5,14 +5,14 @@ public class Card {
     private CardColor cardColor;
     private int value;
 
-    public Card(CardColor cardColor, CardType cardType) {
+    Card(CardColor cardColor, CardType cardType) {
         this.cardColor = cardColor;
         this.cardType = cardType;
-        // Return zero instead of null if card is a special card. Special cards does not have a value.
-        this.value = 0;
+        // Set value to the value of the CardType enum.
+        this.value = cardType.getValue();
     }
     // If card is not a special card, CardType will be set to NORMAL as default.
-    public Card(CardColor cardColor, int value) {
+    Card(CardColor cardColor, int value) {
         this.cardColor = cardColor;
         this.cardType = CardType.NORMAL;
         this.value = value;
