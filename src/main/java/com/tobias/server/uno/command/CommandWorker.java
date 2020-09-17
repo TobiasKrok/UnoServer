@@ -21,10 +21,7 @@ public class CommandWorker implements Runnable {
     }
 
     public void process(String command, UnoClient unoClient) {
-        synchronized (queue) {
-            queue.add(new CommandEvent(parseCommand(command), unoClient));
-            queue.notify();
-        }
+        process(parseCommand(command),unoClient);
     }
 
     public void process(Command command, UnoClient unoClient) {

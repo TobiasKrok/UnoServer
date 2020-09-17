@@ -86,7 +86,6 @@ public class UnoServer implements Runnable {
         for(UnoClient client : unoClientManager.getClients()) {
             worker.process(new Command(CommandType.GAME_CLIENTDRAWCARD,"7"), client);
         }
-        worker.process(new Command(CommandType.GAME_SKIPTURN));
     }
 
     private void startInGameCheck() {

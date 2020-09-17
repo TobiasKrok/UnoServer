@@ -32,6 +32,9 @@ class Queue {
     }
 
     Player peek() {
+        if(queue.size() == 2 && skipNext){
+            return currentPlayer;
+        }
         if (currentPlayer == null || queue.getLast() == currentPlayer) {
             return skipNext ? queue.get(1) : queue.get(0);
         }

@@ -29,7 +29,7 @@ public class Game {
         for (Player p : players) {
             p.setInGame(true);
         }
-        table.setTopCard();
+        //table.setTopCard();
         LOGGER.info("Game started with " + players.size() + " players!");
     }
 

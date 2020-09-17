@@ -42,13 +42,48 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 // GAME_CLIENTLAYCARD should only contain a single card
                 handleLayCard(command, unoClient);
                 sendToAllClientsExclude(unoClient, new Command(CommandType.GAME_OPPONENTLAYCARD, String.valueOf(unoClient.getId() + ":" + command.getData())));
+                if(unoClient.getPlayer().getHandCount() == 0) {
+                    unoClientManager.sendToAllClients(new Command(CommandType.GAME_FINISHED,String.valueOf(unoClient.getId())));
+                }
                 updateGameInfo(true);
                 break;
-            case GAME_SKIPTURN:
-                unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETNEXTTURN, String.valueOf(gameManager.nextQueue().getId())));
+            case  GAME_SKIPTURN:
+                updateGameInfo(true);
+           //     unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETNEXTTURN, String.valueOf(gameManager.nextQueue().getId())));
                 break;
             case GAME_CLIENTSETCOLOR:
                 unoClientManager.sendToAllClients(new Command(CommandType.GAME_SETCOLOR, command.getData()));
+                break;
+            case GAME_UNO:
+                // If the data is empty, it means that a client with 2 cards has said uno before he layed
+                if(command.getData().isEmpty()) {
+//                    for(UnoClient client : unoClientManager.getClients()) {
+//                        // if one player has said uno then the client was too late and must draw 3 cards
+//                        if(client.hasSaidUno()) {
+//                            unoClientManager.sendToClient(client, );
+//                            hasSaidUno = true;
+//                        }
+                    // Notify all clients that the client has said uno
+                    sendToAllClientsExclude(unoClient,new Command(CommandType.GAME_UNO,String.valueOf(unoClient.getId())));
+                    //}
+
+                }
+                break;
+            case GAME_FORGOTUNO:
+                // The client forgot to press the UNO button. Notify all other clients.
+                if(command.getData().isEmpty()) {
+                    gameManager.setForgotUnoPlayer(unoClient.getPlayer());
+                    sendToAllClientsExclude(unoClient, new Command(CommandType.GAME_FORGOTUNO, String.valueOf(unoClient.getId())));
+                } else if(command.getData().equals("OPPONENT")) {
+                    // A player has pressed the forgot uno button after a client has forgotten to say UNO.
+                    for(UnoClient client : unoClientManager.getClients()) {
+                        if(client.getPlayer() == gameManager.getForgotUnoPlayer()) {
+                            unoClientManager.sendToClient(client, new Command(CommandType.GAME_CLIENTDRAWCARD, String.valueOf(3)));
+                        }
+                    }
+                    // Reset forgotUnoPlayer
+                    gameManager.setForgotUnoPlayer(null);
+                }
                 break;
             default:
                 LOGGER.error("Could not process command: " + command.toString() + " which should be sent to client: " + unoClient.getId());
@@ -62,14 +97,15 @@ public class GameCommandHandler extends AbstractCommandHandler {
             case GAME_START:
                 this.gameManager = new GameManager();
                 gameManager.createNewGame(unoClientManager.getPlayerFromClients());
-                unoClientManager.sendToAllClients(new Command(CommandType.GAME_START, command.getData()));
+                System.out.println(gameManager.getTopCard());
+                unoClientManager.sendToAllClients(new Command(CommandType.GAME_START, command.getData() + ":" + gameManager.getTopCard().toString()));
                 updateGameInfo(true);
                 break;
             case GAME_SETCARD:
                 for (UnoClient c : unoClientManager.getClients()) {
                     unoClientManager.sendToClient(c, new Command(CommandType.GAME_SETCARD, cardListToString(gameManager.draw(c.getPlayer(), Integer.parseInt(command.getData())))));
                 }
-                updateGameInfo(true);
+               // updateGameInfo(true);
                 break;
             default:
                 LOGGER.error("Could not process command: " + command.toString());
@@ -80,7 +116,7 @@ public class GameCommandHandler extends AbstractCommandHandler {
     // Sends to all clients except the passed client
     private void sendToAllClientsExclude(UnoClient client, Command command) {
         for (UnoClient c : unoClientManager.getClients()) {
-            if (c.getId() != client.getId()) {
+            if (c != client) {
                 unoClientManager.sendToClient(c, command);
             }
         }

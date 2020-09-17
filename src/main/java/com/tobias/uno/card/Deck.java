@@ -66,28 +66,18 @@ public class Deck {
         cards.add(c);
     }
 
-    private synchronized Card get(int index) {
-        if (index < cards.size() - 1) {
-            Card c = cards.get(index);
-            cards.remove(c);
-            return c;
-        }
-        return null;
-    }
 
-    public void putBottom(Card c) {
-        cards.add(0,c);
-    }
-    List<Card> getCards() {
-        return this.cards;
+    void putBottom(Card c) {
+        cards.add(cards.size() - 1,c);
     }
 
    synchronized List<Card> draw(int n) {
-        List<Card> cards = new ArrayList<>();
-        for (int i = n; i > 0; i--) {
-            cards.add(get(i));
+        List<Card> cardsToDraw = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            cardsToDraw.add(cards.get(i));
+            this.cards.remove(i);
         }
-        return cards;
+        return cardsToDraw;
     }
 }
 
