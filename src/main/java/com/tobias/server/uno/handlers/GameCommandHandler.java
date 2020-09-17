@@ -73,9 +73,9 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 // The client forgot to press the UNO button. Notify all other clients.
                 if(command.getData().isEmpty()) {
                     gameManager.setForgotUnoPlayer(unoClient.getPlayer());
-                    sendToAllClientsExclude(unoClient, new Command(CommandType.GAME_FORGOTUNO, String.valueOf(unoClient.getId())));
                 } else if(command.getData().equals("OPPONENT")) {
                     // A player has pressed the forgot uno button after a client has forgotten to say UNO.
+                    sendToAllClientsExclude(unoClient, new Command(CommandType.GAME_FORGOTUNO, String.valueOf(unoClient.getId())));
                     for(UnoClient client : unoClientManager.getClients()) {
                         if(client.getPlayer() == gameManager.getForgotUnoPlayer()) {
                             unoClientManager.sendToClient(client, new Command(CommandType.GAME_CLIENTDRAWCARD, String.valueOf(3)));
