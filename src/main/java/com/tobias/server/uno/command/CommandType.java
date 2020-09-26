@@ -20,6 +20,7 @@ public enum CommandType {
 
 
     CLIENT_CONNECT,
+    CLIENT_CONNECTED,
     CLIENT_POLL,
     CLIENT_READY,
     CLIENT_REGISTERID,

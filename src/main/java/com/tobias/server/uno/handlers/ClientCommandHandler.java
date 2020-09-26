@@ -22,6 +22,10 @@ public class ClientCommandHandler extends AbstractCommandHandler {
             case CLIENT_REGISTERID:
                 clientManager.sendToClient(unoClient, command);
                 break;
+            case CLIENT_CONNECT:
+                unoClient.getPlayer().setUsername(command.getData());
+                sendToAllClientsExclude(unoClient,new Command(CommandType.CLIENT_CONNECTED,unoClient.getId() + ":" + unoClient.getPlayer().getUsername()));
+                break;
             default:
                 LOGGER.error("Could not process command: " + command.toString() + " which should be sent to client: " + unoClient.getId() );
         }
@@ -35,6 +39,15 @@ public class ClientCommandHandler extends AbstractCommandHandler {
                 break;
             default:
                 LOGGER.error("Could not process command: " + command.toString());
+        }
+    }
+
+    // Sends to all clients except the passed client
+    private void sendToAllClientsExclude(UnoClient client, Command command) {
+        for (UnoClient c : clientManager.getClients()) {
+            if (c != client) {
+                clientManager.sendToClient(c, command);
+            }
         }
     }
 }

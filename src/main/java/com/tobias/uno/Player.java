@@ -8,6 +8,7 @@ import java.util.List;
 public class Player {
 
     private int id;
+    private String username;
     private List<Card> hand;
     private boolean isInGame;
 
@@ -28,11 +29,18 @@ public class Player {
         return id;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    public String getUsername() {
+        return username;
+    }
+
     public void addToHand(List<Card> cards){
         this.hand.addAll(cards);
     }
 
-    protected void clearHand() {
+    void clearHand() {
         this.hand.clear();
     }
 

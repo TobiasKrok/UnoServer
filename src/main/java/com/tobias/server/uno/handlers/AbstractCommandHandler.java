@@ -8,4 +8,5 @@ public abstract class AbstractCommandHandler {
    public abstract void process(Command command, UnoClient unoClient);
 
    public abstract void process(Command command);
+
 }

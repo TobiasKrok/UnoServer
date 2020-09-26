@@ -85,6 +85,11 @@ public class GameCommandHandler extends AbstractCommandHandler {
                     gameManager.setForgotUnoPlayer(null);
                 }
                 break;
+            case CLIENT_CONNECT:
+                unoClient.getPlayer().setUsername(command.getData());
+                sendToAllClientsExclude(unoClient,new Command(CommandType.CLIENT_CONNECTED,unoClient.getId() + ":" + unoClient.getPlayer().getUsername()));
+                break;
+
             default:
                 LOGGER.error("Could not process command: " + command.toString() + " which should be sent to client: " + unoClient.getId());
                 break;
