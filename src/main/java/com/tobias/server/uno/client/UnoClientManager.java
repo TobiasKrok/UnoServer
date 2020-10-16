@@ -7,9 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class UnoClientManager {
     private List<UnoClient> unoClients;
@@ -85,6 +83,15 @@ public class UnoClientManager {
         }
         return false;
     }
+
+    public Map<Integer, String> getClientsIdAndUsername() {
+        Map<Integer, String> clientInfo = new HashMap<>();
+        for(UnoClient client : unoClients) {
+            clientInfo.put(client.getId(),client.getPlayer().getUsername());
+        }
+        return clientInfo;
+    }
+
 
     public UnoClient getClientByPlayer(Player p){
         for(UnoClient c : unoClients) {

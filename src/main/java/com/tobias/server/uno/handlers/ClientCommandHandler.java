@@ -7,6 +7,11 @@ import com.tobias.server.uno.command.CommandType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class ClientCommandHandler extends AbstractCommandHandler {
 
     private UnoClientManager clientManager;
@@ -18,16 +23,22 @@ public class ClientCommandHandler extends AbstractCommandHandler {
 
     @Override
     public void process(Command command, UnoClient unoClient) {
-        switch (command.getType()){
+        switch (command.getType()) {
             case CLIENT_REGISTERID:
                 clientManager.sendToClient(unoClient, command);
                 break;
             case CLIENT_CONNECT:
                 unoClient.getPlayer().setUsername(command.getData());
-                sendToAllClientsExclude(unoClient,new Command(CommandType.CLIENT_CONNECTED,unoClient.getId() + ":" + unoClient.getPlayer().getUsername()));
+                String connectedPlayers = clientManager.getClientsIdAndUsername().entrySet()
+                        .stream()
+                        .map(e -> "[" + e.getKey() + ":" + e.getValue() + "]")
+                        .collect(Collectors.joining(","));
+                // Update  the connected player with the names and ID's of all other connected players
+                clientManager.sendToClient(unoClient,new Command(CommandType.CLIENT_CONNECTEDPLAYERS, connectedPlayers));
+                sendToAllClientsExclude(unoClient, new Command(CommandType.CLIENT_CONNECTED, unoClient.getId() + ":" + unoClient.getPlayer().getUsername()));
                 break;
             default:
-                LOGGER.error("Could not process command: " + command.toString() + " which should be sent to client: " + unoClient.getId() );
+                LOGGER.error("Could not process command: " + command.toString() + " which should be sent to client: " + unoClient.getId());
         }
     }
 

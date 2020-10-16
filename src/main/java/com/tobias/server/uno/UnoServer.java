@@ -94,7 +94,7 @@ public class UnoServer implements Runnable {
             if (unoClientManager.getClients().size() == minPlayers) {
                 accepting = false;
                 if (!unoClientManager.clientsAreInGame()) {
-                    initializeGame(unoClientManager.getPlayerIds());
+             //       initializeGame(unoClientManager.getPlayerIds());
                 }
             } else {
                 // If minPlayers has been hit but a client disconnected, we have to set
