@@ -34,8 +34,8 @@ public class ClientCommandHandler extends AbstractCommandHandler {
                         .map(e -> "[" + e.getKey() + ":" + e.getValue() + "]")
                         .collect(Collectors.joining(","));
                 // Update  the connected player with the names and ID's of all other connected players
+                clientManager.sendToAllClients(new Command(CommandType.CLIENT_CONNECTED, unoClient.getId() + ":" + unoClient.getPlayer().getUsername()));
                 clientManager.sendToClient(unoClient,new Command(CommandType.CLIENT_CONNECTEDPLAYERS, connectedPlayers));
-                sendToAllClientsExclude(unoClient, new Command(CommandType.CLIENT_CONNECTED, unoClient.getId() + ":" + unoClient.getPlayer().getUsername()));
                 break;
             default:
                 LOGGER.error("Could not process command: " + command.toString() + " which should be sent to client: " + unoClient.getId());
