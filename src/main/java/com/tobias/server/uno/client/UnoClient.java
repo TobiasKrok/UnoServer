@@ -65,8 +65,8 @@ public class UnoClient implements Runnable {
         return this.ipAddress;
     }
 
-    public void setReady() {
-        this.ready = true;
+    public void setReady(boolean ready) {
+        this.ready = ready;
     }
 
     private String read() {

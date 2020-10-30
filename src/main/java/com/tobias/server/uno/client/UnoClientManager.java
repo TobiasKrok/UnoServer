@@ -83,16 +83,6 @@ public class UnoClientManager {
         }
         return false;
     }
-
-    public Map<Integer, String> getClientsIdAndUsername() {
-        Map<Integer, String> clientInfo = new HashMap<>();
-        for(UnoClient client : unoClients) {
-            clientInfo.put(client.getId(),client.getPlayer().getUsername());
-        }
-        return clientInfo;
-    }
-
-
     public UnoClient getClientByPlayer(Player p){
         for(UnoClient c : unoClients) {
             if(c.getPlayer() == p) {

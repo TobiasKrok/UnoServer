@@ -27,9 +27,10 @@ public class UnoServer implements Runnable {
     private static final Logger LOGGER = LogManager.getLogger(UnoServer.class.getName());
     public static int minPlayers;
     private Map<String, AbstractCommandHandler> handlers;
-    private ScheduledExecutorService ses;
+    private final ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
     private UnoClientManager unoClientManager;
     private CommandWorker worker;
+    private CommandWorker commandHandlerWorker; //todo local var?
     private boolean running;
     private boolean accepting;
     private int port;
@@ -38,13 +39,7 @@ public class UnoServer implements Runnable {
         this.unoClientManager = new UnoClientManager();
         this.handlers = new HashMap<>();
         this.port = port;
-        this.handlers.put("CLIENT", new ClientCommandHandler(this.unoClientManager));
-        this.handlers.put("GAME", new GameCommandHandler(this.unoClientManager));
-        this.worker = new CommandWorker(handlers);
-        ses = Executors.newSingleThreadScheduledExecutor();
-        Thread t = new Thread(worker);
-        t.setName("CommandWorker-UnoServer-" + t.getId());
-        t.start();
+        initializeHandlers();
     }
 
     public void run() {
@@ -71,12 +66,27 @@ public class UnoServer implements Runnable {
         return this.running;
     }
 
+    private void initializeHandlers() {
+        ClientCommandHandler clientCommandHandler = new ClientCommandHandler(unoClientManager);
+        GameCommandHandler gameCommandHandler = new GameCommandHandler(unoClientManager);
+        this.handlers.put("CLIENT", clientCommandHandler);
+        this.handlers.put("GAME", gameCommandHandler);
+        this.commandHandlerWorker = new CommandWorker(handlers);
+        clientCommandHandler.setWorker(commandHandlerWorker);
+        gameCommandHandler.setWorker(commandHandlerWorker);
+        new Thread(commandHandlerWorker).start();
+        this.worker = new CommandWorker(handlers);
+        Thread t = new Thread(worker);
+        t.setName("CommandWorker-UnoServer-" + t.getId());
+        t.start();
+    }
+
     private void initiateClient(UnoClient unoClient) {
         Thread clientThread = new Thread(unoClient);
         clientThread.setName("UnoClient-" + unoClient.getId());
         clientThread.start();
         unoClientManager.addClient(unoClient);
-        worker.process(new Command(CommandType.CLIENT_REGISTERID, Integer.toString(unoClient.getId())), unoClient);
+        worker.process(new Command(CommandType.CLIENT_REGISTERID, unoClient.getId()), unoClient);
     }
 
     private void initializeGame(List<Integer> playerIds) {

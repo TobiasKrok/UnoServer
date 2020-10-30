@@ -2,13 +2,14 @@ package com.tobias.server.uno.command;
 
 public class Command {
 
-    private String command;
-
     private CommandType type;
     private String data;
 
     public Command(CommandType type) {
         this(type,"");
+    }
+    public Command(CommandType type, int id) {
+        this(type,String.valueOf(id));
     }
     public Command(CommandType type, String data) {
         this.type = type;
