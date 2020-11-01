@@ -4,7 +4,6 @@ import com.tobias.server.uno.client.UnoClient;
 import com.tobias.server.uno.client.UnoClientManager;
 import com.tobias.server.uno.command.Command;
 import com.tobias.server.uno.command.CommandType;
-import com.tobias.server.uno.command.CommandWorker;
 import com.tobias.uno.GameManager;
 import com.tobias.uno.Player;
 import com.tobias.uno.card.Card;
@@ -88,9 +87,9 @@ public class GameCommandHandler extends AbstractCommandHandler {
     public void process(Command command) {
         switch (command.getType()) {
             case GAME_START:
-                this.gameManager = new GameManager();
+                this.gameManager = new GameManager(); //todo maybe not new every time? could just reset in new game method
                 gameManager.createNewGame(unoClientManager.getPlayerFromClients());
-                unoClientManager.sendToAllClients(new Command(CommandType.GAME_START, command.getData() + ":" + gameManager.getTopCard().toString()));
+                unoClientManager.sendToAllClients(new Command(CommandType.GAME_START, gameManager.getTopCard().toString()));
                 updateGameInfo(true);
                 break;
             case GAME_SETCARD:
