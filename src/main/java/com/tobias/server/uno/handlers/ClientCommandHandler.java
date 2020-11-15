@@ -4,15 +4,10 @@ import com.tobias.server.uno.client.UnoClient;
 import com.tobias.server.uno.client.UnoClientManager;
 import com.tobias.server.uno.command.Command;
 import com.tobias.server.uno.command.CommandType;
-import com.tobias.server.uno.command.CommandWorker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ClientCommandHandler extends AbstractCommandHandler {
 
@@ -33,6 +28,7 @@ public class ClientCommandHandler extends AbstractCommandHandler {
                 unoClient.getPlayer().setUsername(command.getData());
                 String connectedPlayers = clientManager.getClients()
                         .stream()
+                        .filter(e -> e.getPlayer().getUsername() != null)
                         .map(e -> "[" + e.getId() + ":" + e.getPlayer().getUsername() + ":" + e.isReady() + "]")
                         .collect(Collectors.joining(","));
                 // Update  the connected player with the names and ID's of all other connected players

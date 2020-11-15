@@ -77,6 +77,9 @@ public class GameCommandHandler extends AbstractCommandHandler {
                     gameManager.setForgotUnoPlayer(null);
                 }
                 break;
+            case GAME_INITIALIZED:
+
+                break;
             default:
                 LOGGER.error("Could not process command: " + command.toString() + " which should be sent to client: " + unoClient.getId());
                 break;
@@ -90,6 +93,9 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 this.gameManager = new GameManager(); //todo maybe not new every time? could just reset in new game method
                 gameManager.createNewGame(unoClientManager.getPlayerFromClients());
                 unoClientManager.sendToAllClients(new Command(CommandType.GAME_START, gameManager.getTopCard().toString()));
+                for(UnoClient client : unoClientManager.getClients()) {
+                    worker.process(new Command(CommandType.GAME_CLIENTDRAWCARD,"7"), client);
+                }
                 updateGameInfo(true);
                 break;
             case GAME_SETCARD:
